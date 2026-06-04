@@ -1,0 +1,496 @@
+{
+    "main": [
+        {
+            "type": "main",
+            "title": "Remote Access Tool",
+            "description": "Manage remote agents via SSH / TCP",
+            "configType": "configBrowser",
+            "items": [
+                {
+                    "type": "subUipageButton",
+                    "title": "Server Status",
+                    "description": "View connected agents",
+                    "subUiId": "status_page"
+                },
+                {
+                    "type": "subUipageButton",
+                    "title": "Send Message",
+                    "description": "Send TCP messages to agents",
+                    "subUiId": "msg_page"
+                },
+                {
+                    "type": "subUipageButton",
+                    "title": "Run Command",
+                    "description": "Execute shell commands on agents",
+                    "subUiId": "run_page"
+                },
+                {
+                    "type": "subUipageButton",
+                    "title": "File Transfer",
+                    "description": "Upload or download files via SCP",
+                    "subUiId": "ft_page"
+                },
+                {
+                    "type": "subUipageButton",
+                    "title": "Rules",
+                    "description": "Manage D-Bus filter rules",
+                    "subUiId": "rules_page"
+                }
+            ]
+        }
+    ],
+    "status_page": [
+        {
+            "type": "section",
+            "title": "Server Status",
+            "description": "Current connection status of all configured agents",
+            "items": [
+                {
+                    "type": "button",
+                    "title": "Refresh Status",
+                    "description": "Click to fetch current connection status",
+                    "key": "status_refresh"
+                },
+                {
+                    "type": "infoKey",
+                    "title": "Status Information",
+                    "key": "status_output"
+                }
+            ]
+        }
+    ],
+    "msg_page": [
+        {
+            "type": "section",
+            "title": "Send Message",
+            "description": "Send a TCP message to a specific agent or broadcast to all",
+            "items": [
+                {
+                    "type": "textShort",
+                    "title": "Client ID",
+                    "description": "Target client ID (leave blank to broadcast)",
+                    "key": "msg_client_id",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Message",
+                    "description": "Text to send over TCP",
+                    "key": "msg_text",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Send",
+                    "description": "Send message to the specified client",
+                    "key": "msg_send",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                },
+                {
+                    "type": "switch",
+                    "title": "Broadcast",
+                    "description": "Broadcast message to all connected agents",
+                    "key": "msg_broadcast",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                }
+            ]
+        }
+    ],
+    "run_page": [
+        {
+            "type": "section",
+            "title": "Run Command",
+            "description": "Execute a shell command on one or more agents",
+            "items": [
+                {
+                    "type": "textShort",
+                    "title": "Client ID",
+                    "description": "Target client ID — leave blank for all, or use tag filter",
+                    "key": "run_client_id",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Tag Filter",
+                    "description": "Run on all clients with this tag (optional)",
+                    "key": "run_tag",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Command",
+                    "description": "Shell command to execute on the remote host",
+                    "key": "run_cmd",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Execute",
+                    "description": "Run the command on the specified target(s)",
+                    "key": "run_execute",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                },
+                {
+                    "type": "infoKey",
+                    "title": "Last Output",
+                    "key": "run_output"
+                }
+            ]
+        }
+    ],
+    "ft_page": [
+        {
+            "type": "section",
+            "title": "File Transfer",
+            "description": "Upload files to agents or download files from agents",
+            "items": [
+                {
+                    "type": "subUipageButton",
+                    "title": "Upload",
+                    "description": "Upload a local file to a remote agent",
+                    "subUiId": "scp_up_page"
+                },
+                {
+                    "type": "subUipageButton",
+                    "title": "Download",
+                    "description": "Download a file from a remote agent",
+                    "subUiId": "scp_dn_page"
+                }
+            ]
+        }
+    ],
+    "scp_up_page": [
+        {
+            "type": "section",
+            "title": "SCP Upload",
+            "description": "Upload a local file to a remote agent via SCP",
+            "items": [
+                {
+                    "type": "textShort",
+                    "title": "Client ID",
+                    "description": "Target client ID",
+                    "key": "scp_client_id",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Local Path",
+                    "description": "Absolute path on this machine",
+                    "key": "scp_local",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Remote Path",
+                    "description": "Absolute path on the remote",
+                    "key": "scp_remote",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Upload",
+                    "description": "Start the upload",
+                    "key": "scp_upload",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                }
+            ]
+        }
+    ],
+    "scp_dn_page": [
+        {
+            "type": "section",
+            "title": "SCP Download",
+            "description": "Download a file from a remote agent via SCP",
+            "items": [
+                {
+                    "type": "textShort",
+                    "title": "Client ID",
+                    "description": "Target client ID",
+                    "key": "scp_dl_client_id",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Remote Path",
+                    "description": "Absolute path on the remote",
+                    "key": "scp_dl_remote",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Local Path",
+                    "description": "Absolute path on this machine",
+                    "key": "scp_dl_local",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Download",
+                    "description": "Start the download",
+                    "key": "scp_download",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                }
+            ]
+        }
+    ],
+    "rules_page": [
+        {
+            "type": "section",
+            "title": "D-Bus Filter Rules",
+            "description": "Manage D-Bus message filter rules for each agent",
+            "items": [
+                {
+                    "type": "subUipageButton",
+                    "title": "List / Toggle Rules",
+                    "description": "View filters and enable or disable them",
+                    "subUiId": "rules_list_page"
+                },
+                {
+                    "type": "subUipageButton",
+                    "title": "Add Filter",
+                    "description": "Create a new D-Bus filter rule",
+                    "subUiId": "rules_add_page"
+                },
+                {
+                    "type": "subUipageButton",
+                    "title": "Remove Filter",
+                    "description": "Delete an existing D-Bus filter rule",
+                    "subUiId": "rules_remove_page"
+                },
+                {
+                    "type": "subUipageButton",
+                    "title": "Global Settings",
+                    "description": "Configure default log and forward behaviour",
+                    "subUiId": "rules_settings_page"
+                },
+                {
+                    "type": "textShort",
+                    "title": "Client ID",
+                    "description": "Client to push current rules to",
+                    "key": "rules_push_client_id",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Push Rules",
+                    "description": "Send current rules to the agent over TCP",
+                    "key": "rules_push",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                }
+            ]
+        }
+    ],
+    "rules_list_page": [
+        {
+            "type": "section",
+            "title": "List & Toggle Rules",
+            "description": "List all filters for a client and enable or disable them",
+            "items": [
+                {
+                    "type": "textShort",
+                    "title": "Client ID",
+                    "description": "Client whose rules to list",
+                    "key": "rules_list_client_id",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Fetch Rules",
+                    "description": "Load the rule list",
+                    "key": "rules_list_fetch",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                },
+                {
+                    "type": "infoKey",
+                    "title": "Rules",
+                    "key": "rules_list_output"
+                },
+                {
+                    "type": "textShort",
+                    "title": "Filter Name",
+                    "description": "Name of filter to toggle",
+                    "key": "rules_toggle_name",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Enable Filter",
+                    "description": "Enable the named filter",
+                    "key": "rules_enable",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                },
+                {
+                    "type": "switch",
+                    "title": "Disable Filter",
+                    "description": "Disable the named filter",
+                    "key": "rules_disable",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                }
+            ]
+        }
+    ],
+    "rules_add_page": [
+        {
+            "type": "section",
+            "title": "Add Filter",
+            "description": "Create a new D-Bus filter rule for an agent",
+            "items": [
+                {
+                    "type": "textShort",
+                    "title": "Client ID",
+                    "description": "Client to add the filter to",
+                    "key": "rules_add_client_id",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Filter Name",
+                    "description": "Unique name for the filter",
+                    "key": "rules_add_name",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Bus",
+                    "description": "D-Bus bus: session or system",
+                    "key": "rules_add_bus",
+                    "default": "session"
+                },
+                {
+                    "type": "textShort",
+                    "title": "Match",
+                    "description": "D-Bus match string",
+                    "key": "rules_add_match",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Types",
+                    "description": "Message types (comma-separated)",
+                    "key": "rules_add_types",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Log",
+                    "description": "Log matched messages",
+                    "key": "rules_add_log",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                },
+                {
+                    "type": "switch",
+                    "title": "Forward",
+                    "description": "Forward matched messages to server",
+                    "key": "rules_add_forward",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                },
+                {
+                    "type": "switch",
+                    "title": "Add",
+                    "description": "Create the filter",
+                    "key": "rules_add_execute",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                }
+            ]
+        }
+    ],
+    "rules_remove_page": [
+        {
+            "type": "section",
+            "title": "Remove Filter",
+            "description": "Delete an existing D-Bus filter rule",
+            "items": [
+                {
+                    "type": "textShort",
+                    "title": "Client ID",
+                    "description": "Client to remove the filter from",
+                    "key": "rules_rm_client_id",
+                    "default": ""
+                },
+                {
+                    "type": "textShort",
+                    "title": "Filter Name",
+                    "description": "Name of the filter to remove",
+                    "key": "rules_rm_name",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Remove",
+                    "description": "Delete the filter",
+                    "key": "rules_rm_execute",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                }
+            ]
+        }
+    ],
+    "rules_settings_page": [
+        {
+            "type": "section",
+            "title": "Global Settings",
+            "description": "Configure default logging and forwarding behaviour",
+            "items": [
+                {
+                    "type": "textShort",
+                    "title": "Client ID",
+                    "description": "Client to update settings for",
+                    "key": "rules_cfg_client_id",
+                    "default": ""
+                },
+                {
+                    "type": "switch",
+                    "title": "Default Log",
+                    "description": "Log unmatched messages by default",
+                    "key": "rules_cfg_log",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                },
+                {
+                    "type": "switch",
+                    "title": "Default Forward",
+                    "description": "Forward unmatched messages",
+                    "key": "rules_cfg_fwd",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                },
+                {
+                    "type": "switch",
+                    "title": "Apply Settings",
+                    "description": "Save and apply global settings",
+                    "key": "rules_cfg_apply",
+                    "default": null,
+                    "trueValue": "yes",
+                    "falseValue": "no"
+                }
+            ]
+        }
+    ]
+}

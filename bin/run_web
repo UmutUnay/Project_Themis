@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if command -v python3 >/dev/null 2>&1; then
+    mkdir -p /tmp/web
+    unzip -oq /etc/themis/gui/web.zip -d /tmp
+    python3 -m http.server 7345 --directory /tmp/web
+else
+    echo "python3 not found"
+fi

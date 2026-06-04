@@ -1,0 +1,1314 @@
+{
+  "main": [
+    {
+      "type": "main",
+      "title": "Firewalld Configuration",
+      "description": "Choose a firewalld configuration area.",
+      "configType": "firewalldMain",
+      "items": [
+        {
+          "type": "section",
+          "title": "Configuration Hub",
+          "description": "",
+          "items": [
+            {
+              "type": "pageButton",
+              "title": "Main Configuration",
+              "description": "Edit firewalld.conf settings.",
+              "items": [
+                {
+                  "type": "section",
+                  "title": "firewalld.conf",
+                  "description": "",
+                  "items": [
+                    {
+                      "type": "textShort",
+                      "title": "Default zone",
+                      "description": "",
+                      "key": "DefaultZone",
+                      "default": "public"
+                    },
+                    {
+                      "type": "dropdown",
+                      "title": "Firewall backend",
+                      "description": "",
+                      "key": "FirewallBackend",
+                      "default": "nftables",
+                      "options": [
+                        "nftables",
+                        "iptables"
+                      ]
+                    },
+                    {
+                      "type": "textShort",
+                      "title": "Minimal mark",
+                      "description": "",
+                      "key": "MinimalMark",
+                      "default": "100"
+                    },
+                    {
+                      "type": "switch",
+                      "title": "Cleanup on exit",
+                      "description": "",
+                      "key": "CleanupOnExit",
+                      "default": "yes",
+                      "trueValue": "yes",
+                      "falseValue": "no"
+                    },
+                    {
+                      "type": "switch",
+                      "title": "Cleanup modules on exit",
+                      "description": "",
+                      "key": "CleanupModulesOnExit",
+                      "default": "yes",
+                      "trueValue": "yes",
+                      "falseValue": "no"
+                    },
+                    {
+                      "type": "switch",
+                      "title": "Lockdown",
+                      "description": "",
+                      "key": "Lockdown",
+                      "default": "no",
+                      "trueValue": "yes",
+                      "falseValue": "no"
+                    },
+                    {
+                      "type": "switch",
+                      "title": "IPv6 reverse path filter",
+                      "description": "",
+                      "key": "IPv6_rpfilter",
+                      "default": "yes",
+                      "trueValue": "yes",
+                      "falseValue": "no"
+                    },
+                    {
+                      "type": "switch",
+                      "title": "Individual calls",
+                      "description": "",
+                      "key": "IndividualCalls",
+                      "default": "no",
+                      "trueValue": "yes",
+                      "falseValue": "no"
+                    },
+                    {
+                      "type": "switch",
+                      "title": "Flush all on reload",
+                      "description": "",
+                      "key": "FlushAllOnReload",
+                      "default": "yes",
+                      "trueValue": "yes",
+                      "falseValue": "no"
+                    },
+                    {
+                      "type": "switch",
+                      "title": "RFC3964 IPv4",
+                      "description": "",
+                      "key": "RFC3964_IPv4",
+                      "default": "yes",
+                      "trueValue": "yes",
+                      "falseValue": "no"
+                    },
+                    {
+                      "type": "switch",
+                      "title": "Allow zone drifting",
+                      "description": "",
+                      "key": "AllowZoneDrifting",
+                      "default": "no",
+                      "trueValue": "yes",
+                      "falseValue": "no"
+                    },
+                    {
+                      "type": "dropdown",
+                      "title": "Automatic helpers",
+                      "description": "",
+                      "key": "AutomaticHelpers",
+                      "default": "system",
+                      "options": [
+                        "yes",
+                        "no",
+                        "system"
+                      ]
+                    },
+                    {
+                      "type": "dropdown",
+                      "title": "Log denied",
+                      "description": "",
+                      "key": "LogDenied",
+                      "default": "off",
+                      "options": [
+                        "off",
+                        "all",
+                        "unicast",
+                        "broadcast",
+                        "multicast"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "pageButton",
+              "title": "Permanent Configurations",
+              "description": "Edit user-defined firewalld XML files.",
+              "items": [
+                {
+                  "type": "section",
+                  "title": "Permanent XML Files",
+                  "description": "",
+                  "items": [
+                    {
+                      "type": "pageButton",
+                      "title": "Zones",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "Zones",
+                          "description": "",
+                          "subUiId": "firewalldZoneConfigUi",
+                          "configType": "firewalldPermanentZones"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "Services",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "Services",
+                          "description": "",
+                          "subUiId": "firewalldServiceConfigUi",
+                          "configType": "firewalldPermanentServices"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "Policies",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "Policies",
+                          "description": "",
+                          "subUiId": "firewalldPolicyConfigUi",
+                          "configType": "firewalldPermanentPolicies"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "IP Sets",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "IP Sets",
+                          "description": "",
+                          "subUiId": "firewalldIpsetConfigUi",
+                          "configType": "firewalldPermanentIpsets"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "ICMP Types",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "ICMP Types",
+                          "description": "",
+                          "subUiId": "firewalldIcmptypeConfigUi",
+                          "configType": "firewalldPermanentIcmptypes"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "Helpers",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "Helpers",
+                          "description": "",
+                          "subUiId": "firewalldHelperConfigUi",
+                          "configType": "firewalldPermanentHelpers"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "pageButton",
+              "title": "Fallback Configurations",
+              "description": "View packaged fallback firewalld XML files.",
+              "items": [
+                {
+                  "type": "section",
+                  "title": "Fallback XML Files",
+                  "description": "",
+                  "items": [
+                    {
+                      "type": "pageButton",
+                      "title": "Zones",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "Zones",
+                          "description": "",
+                          "subUiId": "firewalldZoneConfigUi",
+                          "configType": "firewalldFallbackZones"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "Services",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "Services",
+                          "description": "",
+                          "subUiId": "firewalldServiceConfigUi",
+                          "configType": "firewalldFallbackServices"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "Policies",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "Policies",
+                          "description": "",
+                          "subUiId": "firewalldPolicyConfigUi",
+                          "configType": "firewalldFallbackPolicies"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "IP Sets",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "IP Sets",
+                          "description": "",
+                          "subUiId": "firewalldIpsetConfigUi",
+                          "configType": "firewalldFallbackIpsets"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "ICMP Types",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "ICMP Types",
+                          "description": "",
+                          "subUiId": "firewalldIcmptypeConfigUi",
+                          "configType": "firewalldFallbackIcmptypes"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "pageButton",
+                      "title": "Helpers",
+                      "description": "",
+                      "items": [
+                        {
+                          "type": "configTypedPageButtons",
+                          "title": "Helpers",
+                          "description": "",
+                          "subUiId": "firewalldHelperConfigUi",
+                          "configType": "firewalldFallbackHelpers"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "firewalldZoneConfigUi": [
+    {
+      "type": "section",
+      "title": "Zone",
+      "description": "",
+      "items": [
+        {
+          "type": "textShort",
+          "title": "Short name",
+          "description": "",
+          "key": "short",
+          "default": ""
+        },
+        {
+          "type": "textShort",
+          "title": "Description",
+          "description": "",
+          "key": "description",
+          "default": ""
+        },
+        {
+          "type": "plainList",
+          "title": "Interfaces",
+          "description": "",
+          "subUiId": "firewalldInterfaceUi",
+          "key": "interface",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "name": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Sources",
+          "description": "",
+          "subUiId": "firewalldSourceUi",
+          "key": "source",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "address": "",
+                "ipset": "",
+                "mac": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Services",
+          "description": "",
+          "subUiId": "firewalldServiceRefUi",
+          "key": "service",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "name": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Ports",
+          "description": "",
+          "subUiId": "firewalldPortUi",
+          "key": "port",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "port": "",
+                "protocol": "tcp"
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Protocols",
+          "description": "",
+          "subUiId": "firewalldProtocolUi",
+          "key": "protocol",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "value": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Source ports",
+          "description": "",
+          "subUiId": "firewalldPortUi",
+          "key": "source-port",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "port": "",
+                "protocol": "tcp"
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Forward ports",
+          "description": "",
+          "subUiId": "firewalldForwardPortUi",
+          "key": "forward-port",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "port": "",
+                "protocol": "tcp",
+                "to-port": "",
+                "to-addr": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "ICMP blocks",
+          "description": "",
+          "subUiId": "firewalldNamedRefUi",
+          "key": "icmp-block",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "name": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "switch",
+          "title": "Masquerade",
+          "description": "",
+          "key": "masquerade",
+          "default": "no",
+          "trueValue": "yes",
+          "falseValue": "no"
+        },
+        {
+          "type": "switch",
+          "title": "Forward",
+          "description": "",
+          "key": "forward",
+          "default": "no",
+          "trueValue": "yes",
+          "falseValue": "no"
+        },
+        {
+          "type": "switch",
+          "title": "ICMP block inversion",
+          "description": "",
+          "key": "icmp-block-inversion",
+          "default": "no",
+          "trueValue": "yes",
+          "falseValue": "no"
+        }
+      ]
+    }
+  ],
+  "firewalldServiceConfigUi": [
+    {
+      "type": "section",
+      "title": "Service",
+      "description": "",
+      "items": [
+        {
+          "type": "textShort",
+          "title": "Short name",
+          "description": "",
+          "key": "short",
+          "default": ""
+        },
+        {
+          "type": "textShort",
+          "title": "Description",
+          "description": "",
+          "key": "description",
+          "default": ""
+        },
+        {
+          "type": "plainList",
+          "title": "Ports",
+          "description": "",
+          "subUiId": "firewalldPortUi",
+          "key": "port",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "port": "",
+                "protocol": "tcp"
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Protocols",
+          "description": "",
+          "subUiId": "firewalldProtocolUi",
+          "key": "protocol",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "value": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Source ports",
+          "description": "",
+          "subUiId": "firewalldPortUi",
+          "key": "source-port",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "port": "",
+                "protocol": "tcp"
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Modules",
+          "description": "",
+          "subUiId": "firewalldModuleUi",
+          "key": "module",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "name": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Destinations",
+          "description": "",
+          "subUiId": "firewalldDestinationUi",
+          "key": "destination",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "ipv4": "",
+                "ipv6": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Includes",
+          "description": "",
+          "subUiId": "firewalldIncludeUi",
+          "key": "include",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "service": ""
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "firewalldPolicyConfigUi": [
+    {
+      "type": "section",
+      "title": "Policy",
+      "description": "",
+      "items": [
+        {
+          "type": "textShort",
+          "title": "Short name",
+          "description": "",
+          "key": "short",
+          "default": ""
+        },
+        {
+          "type": "textShort",
+          "title": "Description",
+          "description": "",
+          "key": "description",
+          "default": ""
+        },
+        {
+          "type": "plainList",
+          "title": "Ingress zones",
+          "description": "",
+          "subUiId": "firewalldNamedRefUi",
+          "key": "ingress-zone",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "name": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Egress zones",
+          "description": "",
+          "subUiId": "firewalldNamedRefUi",
+          "key": "egress-zone",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "name": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Services",
+          "description": "",
+          "subUiId": "firewalldServiceRefUi",
+          "key": "service",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "name": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Ports",
+          "description": "",
+          "subUiId": "firewalldPortUi",
+          "key": "port",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "port": "",
+                "protocol": "tcp"
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Protocols",
+          "description": "",
+          "subUiId": "firewalldProtocolUi",
+          "key": "protocol",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "value": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Source ports",
+          "description": "",
+          "subUiId": "firewalldPortUi",
+          "key": "source-port",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "port": "",
+                "protocol": "tcp"
+              }
+            }
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Forward ports",
+          "description": "",
+          "subUiId": "firewalldForwardPortUi",
+          "key": "forward-port",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "port": "",
+                "protocol": "tcp",
+                "to-port": "",
+                "to-addr": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "switch",
+          "title": "Masquerade",
+          "description": "",
+          "key": "masquerade",
+          "default": "no",
+          "trueValue": "yes",
+          "falseValue": "no"
+        }
+      ]
+    }
+  ],
+  "firewalldIpsetConfigUi": [
+    {
+      "type": "section",
+      "title": "IP set",
+      "description": "",
+      "items": [
+        {
+          "type": "textShort",
+          "title": "Short name",
+          "description": "",
+          "key": "short",
+          "default": ""
+        },
+        {
+          "type": "textShort",
+          "title": "Description",
+          "description": "",
+          "key": "description",
+          "default": ""
+        },
+        {
+          "type": "plainList",
+          "title": "Entries",
+          "description": "",
+          "subUiId": "firewalldEntryUi",
+          "key": "entry",
+          "default": [],
+          "template": {
+            "themis_value": ""
+          }
+        },
+        {
+          "type": "plainList",
+          "title": "Options",
+          "description": "",
+          "subUiId": "firewalldOptionUi",
+          "key": "option",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "name": "",
+                "value": ""
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "firewalldIcmptypeConfigUi": [
+    {
+      "type": "section",
+      "title": "ICMP type",
+      "description": "",
+      "items": [
+        {
+          "type": "textShort",
+          "title": "Short name",
+          "description": "",
+          "key": "short",
+          "default": ""
+        },
+        {
+          "type": "textShort",
+          "title": "Description",
+          "description": "",
+          "key": "description",
+          "default": ""
+        },
+        {
+          "type": "plainList",
+          "title": "Destinations",
+          "description": "",
+          "subUiId": "firewalldDestinationUi",
+          "key": "destination",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "ipv4": "",
+                "ipv6": ""
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "firewalldHelperConfigUi": [
+    {
+      "type": "section",
+      "title": "Helper",
+      "description": "",
+      "items": [
+        {
+          "type": "textShort",
+          "title": "Short name",
+          "description": "",
+          "key": "short",
+          "default": ""
+        },
+        {
+          "type": "textShort",
+          "title": "Description",
+          "description": "",
+          "key": "description",
+          "default": ""
+        },
+        {
+          "type": "textShort",
+          "title": "Module",
+          "description": "",
+          "key": "module",
+          "default": ""
+        },
+        {
+          "type": "textShort",
+          "title": "Family",
+          "description": "",
+          "key": "family",
+          "default": ""
+        },
+        {
+          "type": "plainList",
+          "title": "Ports",
+          "description": "",
+          "subUiId": "firewalldPortUi",
+          "key": "port",
+          "default": [],
+          "template": {
+            "themis_value": {
+              "@attributes": {
+                "port": "",
+                "protocol": "tcp"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "firewalldPortUi": [
+    {
+      "type": "mapMap",
+      "title": "Port",
+      "description": "",
+      "subUiId": "firewalldPortAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "port": "",
+          "protocol": "tcp"
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "port": "",
+        "protocol": "tcp"
+      }
+    }
+  ],
+  "firewalldPortAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "Port",
+      "description": "",
+      "key": "port",
+      "default": "",
+      "validator": "^$|^[0-9]{1,5}(-[0-9]{1,5})?$"
+    },
+    {
+      "type": "dropdown",
+      "title": "Protocol",
+      "description": "",
+      "key": "protocol",
+      "default": "tcp",
+      "options": [
+        "tcp",
+        "udp",
+        "sctp",
+        "dccp"
+      ]
+    }
+  ],
+  "firewalldProtocolUi": [
+    {
+      "type": "mapMap",
+      "title": "Protocol",
+      "description": "",
+      "subUiId": "firewalldProtocolAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "value": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "value": ""
+      }
+    }
+  ],
+  "firewalldProtocolAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "Protocol",
+      "description": "",
+      "key": "value",
+      "default": "",
+      "validator": "^$|^[A-Za-z0-9_-]+$"
+    }
+  ],
+  "firewalldServiceRefUi": [
+    {
+      "type": "mapMap",
+      "title": "Service",
+      "description": "",
+      "subUiId": "firewalldServiceRefAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "name": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "name": ""
+      }
+    }
+  ],
+  "firewalldServiceRefAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "Service",
+      "description": "",
+      "key": "name",
+      "default": ""
+    }
+  ],
+  "firewalldNamedRefUi": [
+    {
+      "type": "mapMap",
+      "title": "Name",
+      "description": "",
+      "subUiId": "firewalldNameAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "name": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "name": ""
+      }
+    }
+  ],
+  "firewalldNameAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "Name",
+      "description": "",
+      "key": "name",
+      "default": ""
+    }
+  ],
+  "firewalldInterfaceUi": [
+    {
+      "type": "mapMap",
+      "title": "Interface",
+      "description": "",
+      "subUiId": "firewalldInterfaceAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "name": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "name": ""
+      }
+    }
+  ],
+  "firewalldInterfaceAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "Interface",
+      "description": "",
+      "key": "name",
+      "default": ""
+    }
+  ],
+  "firewalldSourceUi": [
+    {
+      "type": "mapMap",
+      "title": "Source",
+      "description": "",
+      "subUiId": "firewalldSourceAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "address": "",
+          "ipset": "",
+          "mac": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "address": "",
+        "ipset": "",
+        "mac": ""
+      }
+    }
+  ],
+  "firewalldSourceAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "Address",
+      "description": "",
+      "key": "address",
+      "default": ""
+    },
+    {
+      "type": "textShort",
+      "title": "IP set",
+      "description": "",
+      "key": "ipset",
+      "default": ""
+    },
+    {
+      "type": "textShort",
+      "title": "MAC",
+      "description": "",
+      "key": "mac",
+      "default": ""
+    }
+  ],
+  "firewalldForwardPortUi": [
+    {
+      "type": "mapMap",
+      "title": "Forward port",
+      "description": "",
+      "subUiId": "firewalldForwardPortAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "port": "",
+          "protocol": "tcp",
+          "to-port": "",
+          "to-addr": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "port": "",
+        "protocol": "tcp",
+        "to-port": "",
+        "to-addr": ""
+      }
+    }
+  ],
+  "firewalldForwardPortAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "Port",
+      "description": "",
+      "key": "port",
+      "default": "",
+      "validator": "^$|^[0-9]{1,5}(-[0-9]{1,5})?$"
+    },
+    {
+      "type": "dropdown",
+      "title": "Protocol",
+      "description": "",
+      "key": "protocol",
+      "default": "tcp",
+      "options": [
+        "tcp",
+        "udp",
+        "sctp",
+        "dccp"
+      ]
+    },
+    {
+      "type": "textShort",
+      "title": "To port",
+      "description": "",
+      "key": "to-port",
+      "default": "",
+      "validator": "^$|^[0-9]{1,5}(-[0-9]{1,5})?$"
+    },
+    {
+      "type": "textShort",
+      "title": "To address",
+      "description": "",
+      "key": "to-addr",
+      "default": ""
+    }
+  ],
+  "firewalldDestinationUi": [
+    {
+      "type": "mapMap",
+      "title": "Destination",
+      "description": "",
+      "subUiId": "firewalldDestinationAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "ipv4": "",
+          "ipv6": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "ipv4": "",
+        "ipv6": ""
+      }
+    }
+  ],
+  "firewalldDestinationAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "IPv4",
+      "description": "",
+      "key": "ipv4",
+      "default": ""
+    },
+    {
+      "type": "textShort",
+      "title": "IPv6",
+      "description": "",
+      "key": "ipv6",
+      "default": ""
+    }
+  ],
+  "firewalldModuleUi": [
+    {
+      "type": "mapMap",
+      "title": "Module",
+      "description": "",
+      "subUiId": "firewalldNameAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "name": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "name": ""
+      }
+    }
+  ],
+  "firewalldIncludeUi": [
+    {
+      "type": "mapMap",
+      "title": "Include",
+      "description": "",
+      "subUiId": "firewalldIncludeAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "service": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "service": ""
+      }
+    }
+  ],
+  "firewalldIncludeAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "Service",
+      "description": "",
+      "key": "service",
+      "default": ""
+    }
+  ],
+  "firewalldOptionUi": [
+    {
+      "type": "mapMap",
+      "title": "Option",
+      "description": "",
+      "subUiId": "firewalldOptionAttributesUi",
+      "key": "themis_value",
+      "default": {
+        "@attributes": {
+          "name": "",
+          "value": ""
+        }
+      },
+      "template": {
+        "themis_key": "@attributes",
+        "name": "",
+        "value": ""
+      }
+    }
+  ],
+  "firewalldOptionAttributesUi": [
+    {
+      "type": "textShort",
+      "title": "Name",
+      "description": "",
+      "key": "name",
+      "default": ""
+    },
+    {
+      "type": "textShort",
+      "title": "Value",
+      "description": "",
+      "key": "value",
+      "default": ""
+    }
+  ],
+  "firewalldEntryUi": [
+    {
+      "type": "textShort",
+      "title": "Entry",
+      "description": "",
+      "key": "themis_value",
+      "default": ""
+    }
+  ]
+}

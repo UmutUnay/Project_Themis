@@ -1,0 +1,323 @@
+{
+  "main": [
+    {
+      "type": "main",
+      "title": "Apache Configuration",
+      "description": "Choose an Apache configuration area.",
+      "configType": "apacheHub",
+      "items": [
+        {
+          "type": "section",
+          "title": "Configuration Hub",
+          "description": "",
+          "items": [
+            {
+              "type": "pageButton",
+              "title": "Main Configuration",
+              "description": "Edit /etc/apache2/apache2.conf.",
+              "items": [
+                {
+                  "type": "section",
+                  "title": "Main Configuration",
+                  "description": "",
+                  "items": [
+                    {
+                      "type": "configTypedPageButtons",
+                      "title": "Main Configuration",
+                      "description": "",
+                      "subUiId": "apacheStructuredConfigUi",
+                      "configType": "apacheMain"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "pageButton",
+              "title": "Port Configuration",
+              "description": "Edit /etc/apache2/ports.conf.",
+              "items": [
+                {
+                  "type": "section",
+                  "title": "Port Configuration",
+                  "description": "",
+                  "items": [
+                    {
+                      "type": "configTypedPageButtons",
+                      "title": "Port Configuration",
+                      "description": "",
+                      "subUiId": "apacheStructuredConfigUi",
+                      "configType": "apachePorts"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "pageButton",
+              "title": "Site Configuration",
+              "description": "Edit Debian sites-available entries.",
+              "items": [
+                {
+                  "type": "section",
+                  "title": "Site Configuration",
+                  "description": "",
+                  "items": [
+                    {
+                      "type": "configTypedPageButtons",
+                      "title": "Available Sites",
+                      "description": "",
+                      "subUiId": "apacheEnabledStructuredConfigUi",
+                      "configType": "apacheSites"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "pageButton",
+              "title": "Mod Configuration",
+              "description": "Edit Debian mods-available .load entries.",
+              "items": [
+                {
+                  "type": "section",
+                  "title": "Mod Configuration",
+                  "description": "",
+                  "items": [
+                    {
+                      "type": "configTypedPageButtons",
+                      "title": "Available Mods",
+                      "description": "",
+                      "subUiId": "apacheEnabledStructuredConfigUi",
+                      "configType": "apacheMods"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "pageButton",
+              "title": "Config Configuration",
+              "description": "Edit Debian conf-available entries.",
+              "items": [
+                {
+                  "type": "section",
+                  "title": "Config Configuration",
+                  "description": "",
+                  "items": [
+                    {
+                      "type": "configTypedPageButtons",
+                      "title": "Available Configs",
+                      "description": "",
+                      "subUiId": "apacheEnabledStructuredConfigUi",
+                      "configType": "apacheConfigs"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "apacheStructuredConfigUi": [
+    {
+      "type": "section",
+      "title": "Apache Entries",
+      "description": "",
+      "items": [
+        {
+          "type": "mapList",
+          "title": "Entries",
+          "description": "",
+          "key": "entries",
+          "default": [],
+          "template": {
+            "kind": "directive",
+            "name": "ServerName",
+            "args": "",
+            "children": []
+          },
+          "subUiId": "apacheEntryUi"
+        }
+      ]
+    }
+  ],
+  "apacheEnabledStructuredConfigUi": [
+    {
+      "type": "section",
+      "title": "Apache Entries",
+      "description": "",
+      "items": [
+        {
+          "type": "switch",
+          "title": "Enable",
+          "description": "",
+          "key": "enabled",
+          "default": false,
+          "trueValue": true,
+          "falseValue": false
+        },
+        {
+          "type": "mapList",
+          "title": "Entries",
+          "description": "",
+          "key": "entries",
+          "default": [],
+          "template": {
+            "kind": "directive",
+            "name": "ServerName",
+            "args": "",
+            "children": []
+          },
+          "subUiId": "apacheEntryUi"
+        }
+      ]
+    }
+  ],
+  "apacheEntryUi": [
+    {
+      "type": "dropdown",
+      "title": "Entry Type",
+      "description": "",
+      "key": "kind",
+      "default": "directive",
+      "options": [
+        "directive",
+        "container"
+      ]
+    },
+    {
+      "type": "dropdown",
+      "title": "Container Or Directive",
+      "description": "",
+      "key": "name",
+      "default": "ServerName",
+      "options": [
+        "AcceptFilter",
+        "AccessFileName",
+        "AddDefaultCharset",
+        "AddDescription",
+        "AddEncoding",
+        "AddHandler",
+        "AddIcon",
+        "AddIconByEncoding",
+        "AddIconByType",
+        "AddInputFilter",
+        "AddLanguage",
+        "AddOutputFilter",
+        "AddType",
+        "Alias",
+        "AliasMatch",
+        "AllowEncodedSlashes",
+        "AllowOverride",
+        "AllowOverrideList",
+        "AuthBasicProvider",
+        "AuthName",
+        "AuthType",
+        "AuthUserFile",
+        "BrowserMatch",
+        "BrowserMatchNoCase",
+        "CustomLog",
+        "DefaultRuntimeDir",
+        "DefaultType",
+        "Define",
+        "Directory",
+        "DirectoryIndex",
+        "DirectoryMatch",
+        "DocumentRoot",
+        "EnableMMAP",
+        "EnableSendfile",
+        "ErrorDocument",
+        "ErrorLog",
+        "ErrorLogFormat",
+        "ExtendedStatus",
+        "Files",
+        "FilesMatch",
+        "ForceType",
+        "Group",
+        "Header",
+        "HostnameLookups",
+        "If",
+        "IfDefine",
+        "IfModule",
+        "IfVersion",
+        "Include",
+        "IncludeOptional",
+        "KeepAlive",
+        "KeepAliveTimeout",
+        "LanguagePriority",
+        "Limit",
+        "LimitExcept",
+        "LimitRequestBody",
+        "Listen",
+        "LoadFile",
+        "LoadModule",
+        "Location",
+        "LocationMatch",
+        "LogFormat",
+        "LogLevel",
+        "MaxKeepAliveRequests",
+        "ModMimeUsePathInfo",
+        "NameVirtualHost",
+        "Options",
+        "PassEnv",
+        "PidFile",
+        "Proxy",
+        "ProxyPass",
+        "ProxyPassReverse",
+        "Redirect",
+        "RedirectMatch",
+        "Require",
+        "RequireAll",
+        "RequireAny",
+        "RequireNone",
+        "RewriteCond",
+        "RewriteEngine",
+        "RewriteRule",
+        "ScriptAlias",
+        "ServerAdmin",
+        "ServerAlias",
+        "ServerName",
+        "ServerRoot",
+        "ServerSignature",
+        "ServerTokens",
+        "SetEnv",
+        "SetEnvIf",
+        "SetHandler",
+        "SSLCertificateFile",
+        "SSLCertificateKeyFile",
+        "SSLEngine",
+        "SSLProtocol",
+        "Timeout",
+        "TraceEnable",
+        "TypesConfig",
+        "Use",
+        "User",
+        "VirtualHost"
+      ]
+    },
+    {
+      "type": "textShort",
+      "title": "Arguments",
+      "description": "",
+      "key": "args",
+      "default": ""
+    },
+    {
+      "type": "mapList",
+      "title": "Nested Entries",
+      "description": "",
+      "key": "children",
+      "default": [],
+      "template": {
+        "kind": "directive",
+        "name": "Require",
+        "args": "all granted",
+        "children": []
+      },
+      "subUiId": "apacheEntryUi"
+    }
+  ]
+}

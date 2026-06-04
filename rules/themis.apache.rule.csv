@@ -1,0 +1,15 @@
+# type,interface,member
+method_call,org.themis.GenericBus,testApache
+method_return,org.themis.GenericBus,testApache
+method_call,org.themis.GenericBus,getApacheConfig
+method_return,org.themis.GenericBus,getApacheConfig
+method_call,org.themis.GenericBus,setApacheConfig
+method_return,org.themis.GenericBus,setApacheConfig
+method_call,org.themis.GenericBus,removeApacheConfig
+method_return,org.themis.GenericBus,removeApacheConfig
+method_call,org.themis.GenericBus,generateApacheConfig
+method_return,org.themis.GenericBus,generateApacheConfig
+method_call,org.themis.GenericBus,ruleReady
+method_return,org.themis.GenericBus,ruleReady
+method_call,org.themis.GenericBus,testReady
+method_return,org.themis.GenericBus,testReady

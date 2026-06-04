@@ -1,0 +1,5 @@
+themis (@DEBIAN_VERSION@) unstable; urgency=medium
+
+  * Build Project Themis server from the root CMake project for @ARCHITECTURE@.
+
+ -- Umut Unay <umutunay.27@gmail.com>  @DATE@

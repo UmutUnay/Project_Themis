@@ -1,0 +1,15 @@
+[Unit]
+Description=Themis service
+After=network-online.target dbus.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/bin/themis
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

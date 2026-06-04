@@ -1,0 +1,11 @@
+# type,interface,member
+method_call,org.themis.GenericBus,testExample
+method_return,org.themis.GenericBus,testExample
+method_call,org.themis.GenericBus,getExampleConfig
+method_return,org.themis.GenericBus,getExampleConfig
+method_call,org.themis.GenericBus,setExampleConfig
+method_return,org.themis.GenericBus,setExampleConfig
+method_call,org.themis.GenericBus,ruleReady
+method_return,org.themis.GenericBus,ruleReady
+method_call,org.themis.GenericBus,testReady
+method_return,org.themis.GenericBus,testReady

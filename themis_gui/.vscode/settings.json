@@ -1,0 +1,63 @@
+{
+    "C/C++ Include Guard.Spaces After Endif": 2,
+    "C/C++ Include Guard.Comment Style": "Line",
+    "C/C++ Include Guard.File Path Pascal Case to Snake Case": true,
+    "C/C++ Include Guard.Path Depth": 0,
+    "C/C++ Include Guard.Path Skip": 0,
+    "fileheader.configObj": {
+        "createHeader": true,
+        "autoAdd": true,
+        "checkFileChange": true,
+        "updateAfterSave": true,
+        "useGitUserName": true,
+        "annotationStr": {
+            "file": "@",
+            "function": "@"
+        },
+        "language": {
+            "cpp": {
+                "head": "/*",
+                "middle": " * ",
+                "end": " */",
+                "functionParams": true,
+                "functionParamsTypes": true
+            },
+            "c": {
+                "head": "/*",
+                "middle": " * ",
+                "end": " */"
+            }
+        },
+        "customMade": {
+            "Author": "git config user.name",
+            "Date": "createTime",
+            "LastEditTime": "lastTime",
+            "Description": ""
+        },
+        "headInsertLine": {
+            "c": 0,
+            "cpp": 0
+        }
+    },
+    "fileheader.cursorMode": {},
+    "fileheader.customMade": {
+        "Author": "git config user.name",
+        "Date": "createTime",
+        "LastEditTime": "lastTime",
+        "Description": ""
+    },
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.runAutomatically": true,
+    "C_Cpp.codeAnalysis.clangTidy.path": "",
+    "C_Cpp.clang_format_path": "",
+    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
+    "files.associations": {
+        ".clang-tidy": "yaml",
+        ".clang-format": "yaml"
+    },
+    "C_Cpp.clang_format_fallbackStyle": "none",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "dart.flutterSdkPath": ".flutter",
+}

@@ -1,0 +1,383 @@
+{
+  "main": [
+    {
+      "type": "main",
+      "title": "Example Config UI Showcase",
+      "description": "Generated example config with all supported UI item types.",
+      "configType": "exampleMain",
+      "items": [
+        {
+          "type": "section",
+          "title": "Information",
+          "description": "Static and config-backed text blocks.",
+          "items": [
+            {
+              "type": "info",
+              "title": "Static info",
+              "description": "",
+              "value": "This is a generated example UI."
+            },
+            {
+              "type": "infoKey",
+              "title": "Config-backed info",
+              "description": "",
+              "key": "info_text"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "Basic inputs",
+          "description": "Boolean, text, and one-shot button examples.",
+          "items": [
+            {
+              "type": "switch",
+              "title": "Switch",
+              "description": "",
+              "key": "toggle_enabled",
+              "default": "disabled",
+              "trueValue": "enabled",
+              "falseValue": "disabled"
+            },
+            {
+              "type": "button",
+              "title": "Button",
+              "description": "Toggles a boolean value.",
+              "key": "action_button",
+              "default": false,
+              "trueValue": true,
+              "falseValue": false
+            },
+            {
+              "type": "text",
+              "title": "Text",
+              "description": "",
+              "key": "long_text",
+              "default": "Default long text"
+            },
+            {
+              "type": "textShort",
+              "title": "Short text",
+              "description": "",
+              "key": "short_text",
+              "default": "Default"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "Choices",
+          "description": "Single-choice and multi-choice controls.",
+          "items": [
+            {
+              "type": "dropdown",
+              "title": "Dropdown",
+              "description": "",
+              "key": "release_channel",
+              "default": "stable",
+              "options": [
+                "stable",
+                "beta",
+                "nightly"
+              ]
+            },
+            {
+              "type": "radio",
+              "title": "Radio",
+              "description": "",
+              "key": "schedule",
+              "default": "daily",
+              "options": [
+                "daily",
+                "weekly",
+                "monthly"
+              ]
+            },
+            {
+              "type": "checkbox",
+              "title": "Checkbox",
+              "description": "",
+              "key": "enabled_modules",
+              "default": [
+                "networking",
+                "logging"
+              ],
+              "options": [
+                "networking",
+                "logging",
+                "metrics"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "Nested UI",
+          "description": "Inline sections, page buttons, and sub-UI buttons.",
+          "items": [
+            {
+              "type": "section",
+              "title": "Section",
+              "description": "A section nested in a section.",
+              "items": [
+                {
+                  "type": "info",
+                  "title": "Nested info",
+                  "description": "",
+                  "value": "Nested sections can group controls."
+                }
+              ]
+            },
+            {
+              "type": "pageButton",
+              "title": "Page button",
+              "description": "Opens an inline page using the current config.",
+              "items": [
+                {
+                  "type": "info",
+                  "title": "Inline page",
+                  "description": "",
+                  "value": "This page button owns its items."
+                },
+                {
+                  "type": "textShort",
+                  "title": "Inline short text",
+                  "description": "",
+                  "key": "short_text",
+                  "default": "Default"
+                }
+              ]
+            },
+            {
+              "type": "plainSubUi",
+              "title": "",
+              "description": "",
+              "subUiId": "sharedSubUi"
+            },
+            {
+              "type": "subUipageButton",
+              "title": "Sub-UI page button",
+              "description": "Opens a page built from a named sub-UI.",
+              "subUiId": "sharedSubUi"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "Config-typed widgets",
+          "description": "Seeded secondary configs render here.",
+          "items": [
+            {
+              "type": "configTypedList",
+              "title": "Config typed list",
+              "description": "",
+              "subUiId": "secondaryConfigUi",
+              "configType": "exampleSecondary"
+            },
+            {
+              "type": "configTypedPageButtons",
+              "title": "Config typed page buttons",
+              "description": "",
+              "subUiId": "secondaryConfigUi",
+              "configType": "exampleSecondary"
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "title": "Mutable collections",
+          "description": "Growable list and map-backed config examples.",
+          "items": [
+            {
+              "type": "mapList",
+              "title": "Map list",
+              "description": "",
+              "subUiId": "mapListEntryUi",
+              "key": "map_list",
+              "default": [
+                {
+                  "name": "Default item",
+                  "enabled": true,
+                  "mode": "audit"
+                }
+              ],
+              "template": {
+                "name": "New item",
+                "enabled": false,
+                "mode": "observe"
+              }
+            },
+            {
+              "type": "plainList",
+              "title": "Plain list",
+              "description": "",
+              "subUiId": "plainListEntryUi",
+              "key": "plain_list",
+              "default": [
+                "Default item"
+              ],
+              "template": {
+                "themis_value": "New item"
+              }
+            },
+            {
+              "type": "mapMap",
+              "title": "Map of maps",
+              "description": "",
+              "subUiId": "mapMapEntryUi",
+              "key": "map_map",
+              "default": {
+                "Default": {
+                  "enabled": true,
+                  "note": "Default entry"
+                }
+              },
+              "template": {
+                "themis_key": "New",
+                "enabled": false,
+                "note": "New entry"
+              }
+            },
+            {
+              "type": "plainMap",
+              "title": "Plain map",
+              "description": "",
+              "subUiId": "plainMapEntryUi",
+              "key": "plain_map",
+              "default": {
+                "Default": true
+              },
+              "template": {
+                "themis_key": "New",
+                "themis_value": false
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sharedSubUi": [
+    {
+      "type": "infoKey",
+      "title": "Shared sub-UI text",
+      "description": "",
+      "key": "info_text"
+    },
+    {
+      "type": "switch",
+      "title": "Shared sub-UI switch",
+      "description": "",
+      "key": "toggle_enabled",
+      "default": "disabled",
+      "trueValue": "enabled",
+      "falseValue": "disabled"
+    }
+  ],
+  "secondaryConfigUi": [
+    {
+      "type": "infoKey",
+      "title": "Secondary name",
+      "description": "",
+      "key": "secondary_name"
+    },
+    {
+      "type": "switch",
+      "title": "Secondary enabled",
+      "description": "",
+      "key": "secondary_enabled",
+      "default": false,
+      "trueValue": true,
+      "falseValue": false
+    },
+    {
+      "type": "text",
+      "title": "Secondary notes",
+      "description": "",
+      "key": "secondary_notes",
+      "default": "Notes"
+    }
+  ],
+  "mapListEntryUi": [
+    {
+      "type": "textShort",
+      "title": "Name",
+      "description": "",
+      "key": "name",
+      "default": "New item"
+    },
+    {
+      "type": "switch",
+      "title": "Enabled",
+      "description": "",
+      "key": "enabled",
+      "default": false,
+      "trueValue": true,
+      "falseValue": false
+    },
+    {
+      "type": "dropdown",
+      "title": "Mode",
+      "description": "",
+      "key": "mode",
+      "default": "observe",
+      "options": [
+        "observe",
+        "audit",
+        "enforce"
+      ]
+    }
+  ],
+  "plainListEntryUi": [
+    {
+      "type": "textShort",
+      "title": "Value",
+      "description": "",
+      "key": "themis_value",
+      "default": "New item"
+    }
+  ],
+  "mapMapEntryUi": [
+    {
+      "type": "textShort",
+      "title": "Key",
+      "description": "",
+      "key": "themis_key",
+      "default": "New"
+    },
+    {
+      "type": "switch",
+      "title": "Enabled",
+      "description": "",
+      "key": "enabled",
+      "default": false,
+      "trueValue": true,
+      "falseValue": false
+    },
+    {
+      "type": "textShort",
+      "title": "Note",
+      "description": "",
+      "key": "note",
+      "default": "New entry"
+    }
+  ],
+  "plainMapEntryUi": [
+    {
+      "type": "textShort",
+      "title": "Key",
+      "description": "",
+      "key": "themis_key",
+      "default": "New"
+    },
+    {
+      "type": "switch",
+      "title": "Value",
+      "description": "",
+      "key": "themis_value",
+      "default": false,
+      "trueValue": true,
+      "falseValue": false
+    }
+  ]
+}

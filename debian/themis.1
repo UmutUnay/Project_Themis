@@ -1,0 +1,18 @@
+.TH THEMIS 1 "May 2026" "Themis 0.1.3" "User Commands"
+.SH NAME
+themis \- run the Project Themis service manager
+.SH SYNOPSIS
+.B themis
+.SH DESCRIPTION
+.B themis
+starts the Project Themis server. The service initializes DBus communication,
+loads Project Themis runtime files, starts configured plugins, and exposes the
+Project Themis HTTP API.
+.PP
+On Debian systems this program is normally managed through
+.BR systemd (1)
+using
+.BR themis.service .
+.SH SEE ALSO
+.BR systemctl (1),
+.BR dbus-daemon (1)

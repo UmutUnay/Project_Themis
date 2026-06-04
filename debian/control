@@ -1,0 +1,25 @@
+Source: themis
+Section: admin
+Priority: optional
+Maintainer: Umut Unay <umutunay.27@gmail.com>
+Build-Depends:
+ cmake,
+ debhelper-compat (= 13),
+ libdbus-1-dev,
+ pkg-config,
+ python3
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: themis
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+ dbus,
+ curl,
+ python3,
+ unzip
+Description: Project Themis service manager
+ Project Themis supervises and manages Linux services through its server,
+ DBus communication, plugins, and web interface.

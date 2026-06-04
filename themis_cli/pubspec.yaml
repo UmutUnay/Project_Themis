@@ -1,0 +1,19 @@
+name: themis_cli
+description: Command line interface for Project Themis
+version: 0.0.2
+
+publish_to: "none"
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  args: ^2.7.0
+  collection: ^1.19.1
+  nocterm: ^0.6.0
+  themis_ui_lib:
+    path: "../themis_ui_lib"
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6

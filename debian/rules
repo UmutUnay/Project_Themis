@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+BUILD_DIR := obj-$(DEB_HOST_GNU_TYPE)
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	cmake -S . -B $(BUILD_DIR) \
+		-D_TARGET_NAME=main \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=/usr
+
+override_dh_auto_build:
+	cmake --build $(BUILD_DIR) --target Themis_Server
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	binary="$$(find $(BUILD_DIR) -maxdepth 2 -type f -name Themis_Server -perm /111 -print -quit)"; \
+	test -n "$$binary"; \
+	install -D -m 0755 "$$binary" debian/themis/usr/bin/themis

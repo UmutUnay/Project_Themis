@@ -1,0 +1,25 @@
+# type,interface,member
+method_call,org.themis.GenericBus,testFirewalld
+method_return,org.themis.GenericBus,testFirewalld
+method_call,org.themis.GenericBus,getFirewalldConf
+method_return,org.themis.GenericBus,getFirewalldConf
+method_call,org.themis.GenericBus,setFirewalldConf
+method_return,org.themis.GenericBus,setFirewalldConf
+method_call,org.themis.GenericBus,getPermanentConf
+method_return,org.themis.GenericBus,getPermanentConf
+method_call,org.themis.GenericBus,setPermanentConf
+method_return,org.themis.GenericBus,setPermanentConf
+method_call,org.themis.GenericBus,removePermanentConf
+method_return,org.themis.GenericBus,removePermanentConf
+method_call,org.themis.GenericBus,getFallbackConf
+method_return,org.themis.GenericBus,getFallbackConf
+method_call,org.themis.GenericBus,generatePermanentConf
+method_return,org.themis.GenericBus,generatePermanentConf
+method_call,org.themis.GenericBus,firewalldConfJsonGenerated
+method_return,org.themis.GenericBus,firewalldConfJsonGenerated
+method_call,org.themis.GenericBus,firewalldConfConfGenerated
+method_return,org.themis.GenericBus,firewalldConfConfGenerated
+method_call,org.themis.GenericBus,ruleReady
+method_return,org.themis.GenericBus,ruleReady
+method_call,org.themis.GenericBus,testReady
+method_return,org.themis.GenericBus,testReady

@@ -1,0 +1,9 @@
+# type,interface,member
+method_call,org.themis.GenericBus,jsonGenerated
+method_return,org.themis.GenericBus,jsonGenerated
+method_call,org.themis.GenericBus,confGenerated
+method_return,org.themis.GenericBus,confGenerated
+method_call,org.themis.GenericBus,ruleReady
+method_return,org.themis.GenericBus,ruleReady
+method_call,org.themis.GenericBus,testReady
+method_return,org.themis.GenericBus,testReady

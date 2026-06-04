@@ -1,0 +1,16 @@
+/*
+ * Author: UMUT UNAY
+ * Date: 2025-11-24 19:15:27
+ * LastEditTime: 2025-11-24 19:34:39
+ * Description: 
+ */
+
+#ifndef ERROR_MESSAGE_HANDLERS_EEFB3D74_5F24_4BBA_8C3D_728E7A168C1C
+#define ERROR_MESSAGE_HANDLERS_EEFB3D74_5F24_4BBA_8C3D_728E7A168C1C
+
+#define ErrorMessage(X) \
+	do {            \
+		X       \
+	} while (0)
+
+#endif // ERROR_MESSAGE_HANDLERS_EEFB3D74_5F24_4BBA_8C3D_728E7A168C1C

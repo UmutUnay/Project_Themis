@@ -1,0 +1,23 @@
+Architectures: arm64
+Codename: stable
+Components: main
+Date: Tue, 19 May 2026 18:45:11 +0000
+Label: Project Themis
+Origin: Project Themis
+Suite: stable
+MD5Sum:
+ d05675132286a78b5e95f34bd4b06751              152 Release
+ e27660345dfd5104c3f09dd2c44fd05c              688 main/binary-arm64/Packages
+ 1f8ac60168876d8634877f793f366de3              485 main/binary-arm64/Packages.gz
+SHA1:
+ feb2fc55abd7e1ea43ff74aef5acbecc002fbe78              152 Release
+ f5140784acbb7d4616d024e8e7218c386b6edc49              688 main/binary-arm64/Packages
+ 61f859eabc8406017bf75682baf11bfc35739e13              485 main/binary-arm64/Packages.gz
+SHA256:
+ 5cc6d3190ba583b1922e99a58ece80b37449586e8d774d81055d5189ae2c6d77              152 Release
+ 0d9ea2d7274f8b19888d0e3c030f46f1b8d1a33930145c4d7014e6c6acb14df6              688 main/binary-arm64/Packages
+ 030372b62c74d147a59b26e025581eb74894bc5ec8618087ce38e8ea4754ac57              485 main/binary-arm64/Packages.gz
+SHA512:
+ 1dd90cf6c625860c608a8b9427d987bfa81dbacde49dd5c0049cf032521a34997ccb6c74a722f8695e6179c034051b2b5bbfa4bd2e13dc8ee71c80f4697b0576              152 Release
+ 63bfb74a34f3f0e0118f1fae8109c4b85595b82626043d8efc891167730b198cc33bbcd8e73628a0c7a5b104ea224f123b159e8518b2b758962c974034237413              688 main/binary-arm64/Packages
+ 61bb5ae033eb1b99ec054109d742b22108e7615abfe7d8d57eb002c07aab3b489dd58c9c99ac5fa8be629a5efeb7a5e9f40f056631feaf48f37911d87fca959b              485 main/binary-arm64/Packages.gz

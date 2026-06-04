@@ -1,0 +1,231 @@
+# This is a partial credits file for external projects used by Project Themis.
+#
+# N: name of the external project, author, maintainer group, or contributor group
+# W: web page
+# D: description of what Project Themis uses it for
+# V: version, source, or dependency declaration used by Project Themis
+# F: Project Themis file or directory that uses it
+#
+# This file is not a full license inventory. Keep upstream license notices,
+# bundled license files, and generated lockfiles when distributing releases.
+
+N: Yutaka Hirosawa and cpp-httplib contributors
+W: https://github.com/yhirose/cpp-httplib
+D: HTTP server library used by the Themis HTTP component.
+V: v0.29.0, fetched by CMake FetchContent.
+F: components/http/CMakeLists.txt
+F: components/http/include/HttpThread.hh
+
+N: Niels Lohmann and nlohmann/json contributors
+W: https://github.com/nlohmann/json
+D: JSON parsing and serialization used by server components, plugins, and the remote access client agent.
+V: v3.11.3, fetched by CMake FetchContent.
+F: components/dbus/CMakeLists.txt
+F: plugins/remote_access_tool_plugin/CMakeLists.txt
+F: plugins/remote_access_tool_plugin/client_agent/CMakeLists.txt
+F: main/httpHandlers.hh
+F: plugins/
+
+N: Lee Thomason and tinyxml2 contributors
+W: https://github.com/leethomason/tinyxml2
+D: XML parsing used by the firewalld plugin.
+V: 11.0.0, fetched by CMake FetchContent.
+F: plugins/firewalld/CMakeLists.txt
+F: plugins/firewalld/include/functions.hh
+F: plugins/firewalld/src/functions.cpp
+
+N: D-Bus maintainers and contributors
+W: https://www.freedesktop.org/wiki/Software/dbus/
+D: System bus library used for Themis server and plugin communication.
+V: libdbus-1 system package, discovered through pkg-config.
+F: components/dbus/
+F: plugins/
+F: templates/org.themis.*.conf
+
+N: Flutter project contributors
+W: https://flutter.dev
+D: Application framework used by the graphical Themis interface.
+V: Flutter SDK dependency.
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/
+
+N: Dart project contributors
+W: https://dart.dev
+D: Language, package ecosystem, and runtime used by the Themis CLI, shared UI library, and Flutter application code.
+V: Dart SDK constraints in pubspec.yaml files.
+F: themis_cli/pubspec.yaml
+F: themis_ui_lib/pubspec.yaml
+F: themis_gui/pubspec.yaml
+
+N: Dart args package maintainers and contributors
+W: https://pub.dev/packages/args
+D: Command-line argument and command runner support for the Themis CLI.
+V: ^2.7.0
+F: themis_cli/pubspec.yaml
+F: themis_cli/bin/themis_cli.dart
+F: themis_cli/bin/commands/
+
+N: Dart collection package maintainers and contributors
+W: https://pub.dev/packages/collection
+D: Collection helpers used by CLI and GUI config workflows.
+V: ^1.19.1
+F: themis_cli/pubspec.yaml
+F: themis_gui/pubspec.yaml
+F: themis_cli/bin/tui/
+F: themis_gui/lib/feature/config_page/
+
+N: Nocterm maintainers and contributors
+W: https://pub.dev/packages/nocterm
+D: Terminal UI framework used by the interactive Themis CLI.
+V: ^0.6.0
+F: themis_cli/pubspec.yaml
+F: themis_cli/bin/tui/
+
+N: Dio maintainers and contributors
+W: https://pub.dev/packages/dio
+D: HTTP client used by the shared Themis UI client library and GUI.
+V: ^5.9.0
+F: themis_ui_lib/pubspec.yaml
+F: themis_gui/pubspec.yaml
+F: themis_ui_lib/lib/src/service/themis_client.dart
+
+N: Equatable maintainers and contributors
+W: https://pub.dev/packages/equatable
+D: Value equality support for Themis shared models and GUI state classes.
+V: ^2.0.7
+F: themis_ui_lib/pubspec.yaml
+F: themis_gui/pubspec.yaml
+F: themis_ui_lib/lib/src/model/
+F: themis_gui/lib/core/model/
+
+N: UUID package maintainers and contributors
+W: https://pub.dev/packages/uuid
+D: Unique identifier generation used by Themis UI model workflows.
+V: ^4.5.2
+F: themis_ui_lib/pubspec.yaml
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/feature/config_page/widgets/themis_widget.dart
+
+N: Bloc library maintainers and contributors
+W: https://pub.dev/packages/flutter_bloc
+D: Flutter state management used by GUI settings and plugin pages.
+V: flutter_bloc ^9.1.1
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/
+
+N: Hydrated Bloc maintainers and contributors
+W: https://pub.dev/packages/hydrated_bloc
+D: Persistent GUI state storage.
+V: ^11.0.0
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/main.dart
+F: themis_gui/lib/feature/settings/
+
+N: Ubuntu Yaru maintainers and contributors
+W: https://pub.dev/packages/yaru
+D: Ubuntu-style widgets, icons, and theme support for the Themis GUI.
+V: ^10.1.0
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/
+
+N: go_router maintainers and contributors
+W: https://pub.dev/packages/go_router
+D: Route management for Themis GUI pages.
+V: ^17.0.0
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/core/misc/router.dart
+
+N: path_provider maintainers and contributors
+W: https://pub.dev/packages/path_provider
+D: Platform-specific storage directory discovery for GUI state and file flows.
+V: ^2.1.5
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/main.dart
+F: themis_gui/lib/feature/settings/widgets/select_plugin_file.dart
+
+N: Provider package maintainers and contributors
+W: https://pub.dev/packages/provider
+D: Dependency injection and widget tree state access in Themis GUI screens.
+V: ^6.1.5+1
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/feature/
+
+N: handy_window maintainers and contributors
+W: https://pub.dev/packages/handy_window
+D: Desktop window integration support for the Themis GUI.
+V: ^0.4.0
+F: themis_gui/pubspec.yaml
+
+N: IBM Corp. and IBM Plex contributors
+W: https://github.com/IBM/plex
+D: IBM Plex Mono font bundled with the Themis GUI.
+V: IBM Plex Mono Regular, licensed under the SIL Open Font License.
+F: themis_gui/assets/google_fonts/IBMPlexMono-Regular.ttf
+F: themis_gui/assets/google_fonts/OFL.txt
+
+N: Flutter Secure Storage maintainers and contributors
+W: https://pub.dev/packages/flutter_secure_storage
+D: Secure storage support for GUI authentication and encrypted state helpers.
+V: ^10.0.0
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/core/misc/hydrated_encryption.dart
+
+N: Dart crypto package maintainers and contributors
+W: https://pub.dev/packages/crypto
+D: Cryptographic helpers used by GUI hydrated state encryption.
+V: ^3.0.7
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/core/misc/hydrated_encryption.dart
+
+N: Dart convert package maintainers and contributors
+W: https://pub.dev/packages/convert
+D: Encoding and conversion helpers used by GUI hydrated state encryption.
+V: ^3.1.2
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/core/misc/hydrated_encryption.dart
+
+N: window_manager maintainers and contributors
+W: https://pub.dev/packages/window_manager
+D: Desktop window lifecycle and sizing support for the Themis GUI.
+V: ^0.5.1
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/main.dart
+
+N: File Picker maintainers and contributors
+W: https://pub.dev/packages/file_picker
+D: Local file selection for plugin installation workflows.
+V: ^11.0.2
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/feature/settings/widgets/select_plugin_file.dart
+
+N: Toastification maintainers and contributors
+W: https://pub.dev/packages/toastification
+D: Toast notifications in Themis GUI workflows.
+V: ^3.2.0
+F: themis_gui/pubspec.yaml
+F: themis_gui/lib/core/misc/print_success.dart
+F: themis_gui/lib/feature/config_page/widgets/themis_widget.dart
+
+N: CMake maintainers and contributors
+W: https://cmake.org
+D: Build system used by the Themis server, components, and plugins.
+V: CMake 3.16 or newer.
+F: CMakeLists.txt
+F: cmake/
+F: components/
+F: plugins/
+
+N: Python Software Foundation and Python contributors
+W: https://www.python.org
+D: Configuration header generation during the CMake build.
+V: Python 3 interpreter.
+F: confgen.py
+F: cmake/themis_custom_functions.cmake
+
+N: Debian project contributors
+W: https://www.debian.org
+D: Debian package and APT repository tooling used by Themis release scripts.
+V: debmake, dpkg-buildpackage, dpkg-deb, dpkg-scanpackages, apt-ftparchive.
+F: debian/
+F: scripts/deb_service_gen.sh
+F: scripts/build-apt-repo.sh
