@@ -1,4 +1,4 @@
-// remote_access_tool/src/TCPHandler.cpp
+// rat_plugin/src/TCPHandler.cpp
 #include "TCPHandler.hpp"
 #include <iostream>
 #include <cstring>
@@ -10,20 +10,21 @@
 #include <vector>
 #include <chrono>
 #include <thread>
-#include <algorithm>
 
-static constexpr int MAX_CLIENTS = 64;
-
+// Static port utilities
 bool TCPHandler::isPortInUse(int port) {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) return false;
+    
     int opt = 1;
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(port);
+    
     bool inUse = (bind(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0 && errno == EADDRINUSE);
     close(sock);
     return inUse;
@@ -31,13 +32,18 @@ bool TCPHandler::isPortInUse(int port) {
 
 bool TCPHandler::freePort(int port) {
     pid_t currentPid = getpid();
-    char cmd[512];
-    snprintf(cmd, sizeof(cmd),
-             "lsof -t -i :%d 2>/dev/null | while read p; do "
-             "[ \"$p\" != \"%d\" ] && kill -9 \"$p\" 2>/dev/null; "
-             "done",
-             port, (int)currentPid);
+    
+    char cmd[256];
+    snprintf(cmd, sizeof(cmd), 
+             "lsof -ti :%d 2>/dev/null | grep -v %d | xargs -r kill -9 2>/dev/null", 
+             port, currentPid);
     system(cmd);
+    
+    snprintf(cmd, sizeof(cmd), 
+             "fuser -k %d/tcp 2>/dev/null | grep -v %d | xargs -r kill -9 2>/dev/null", 
+             port, currentPid);
+    system(cmd);
+    
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     return !isPortInUse(port);
 }
@@ -49,360 +55,600 @@ void TCPHandler::cleanupPort(int port) {
     }
 }
 
+// Server mode constructor
 TCPHandler::TCPHandler(int port, MessageCallback msgCb, ConnectionCallback connCb)
-    : m_serverPort(port)
+    : m_isServerMode(true)
+    , m_serverPort(port)
     , m_serverFd(-1)
     , m_running(false)
+    , m_connected(false)
     , m_messageCallback(msgCb)
     , m_connectionCallback(connCb) {
-    safeLog("[TCPHandler] Created in SERVER mode on port " + std::to_string(port));
+    
+    std::cout << "[TCPHandler] Created in SERVER mode on port " << port << std::endl;
+}
+
+// Client mode constructor
+TCPHandler::TCPHandler(const std::string& serverIp, int serverPort, 
+                       const std::string& clientId,
+                       MessageCallback msgCb, ConnectionCallback connCb)
+    : m_isServerMode(false)
+    , m_serverIp(serverIp)
+    , m_serverPort(serverPort)
+    , m_ownClientId(clientId)
+    , m_clientFd(-1)
+    , m_running(false)
+    , m_connected(false)
+    , m_messageCallback(msgCb)
+    , m_connectionCallback(connCb) {
+    
+    std::cout << "[TCPHandler] Created in CLIENT mode for server " 
+              << serverIp << ":" << serverPort << " as " << clientId << std::endl;
 }
 
 TCPHandler::~TCPHandler() {
     stop();
 }
 
-void TCPHandler::safeLog(const std::string& msg) {
-    std::lock_guard<std::mutex> lock(m_logMutex);
-    std::cout << msg << std::endl;
-}
-
 bool TCPHandler::start() {
     if (m_running) return true;
+    
     m_running = true;
-
-    cleanupPort(m_serverPort);
-
-    m_serverFd = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_serverFd < 0) {
-        safeLog("[TCPHandler] Failed to create server socket: " + std::string(strerror(errno)));
-        m_running = false;
-        return false;
+    
+    if (m_isServerMode) {
+        // ===== SERVER MODE =====
+        cleanupPort(m_serverPort);
+        
+        // Create socket
+        m_serverFd = socket(AF_INET, SOCK_STREAM, 0);
+        if (m_serverFd < 0) {
+            std::cerr << "[TCPHandler] Failed to create server socket: " << strerror(errno) << std::endl;
+            m_running = false;
+            return false;
+        }
+        
+        // Set socket options
+        int opt = 1;
+        if (setsockopt(m_serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+            std::cerr << "[TCPHandler] Failed to set socket options: " << strerror(errno) << std::endl;
+            close(m_serverFd);
+            m_running = false;
+            return false;
+        }
+        
+        // Bind
+        struct sockaddr_in addr;
+        memset(&addr, 0, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_addr.s_addr = INADDR_ANY;
+        addr.sin_port = htons(m_serverPort);
+        
+        if (bind(m_serverFd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+            std::cerr << "[TCPHandler] Failed to bind to port " << m_serverPort << ": " << strerror(errno) << std::endl;
+            close(m_serverFd);
+            m_running = false;
+            return false;
+        }
+        
+        // Listen
+        if (listen(m_serverFd, 10) < 0) {
+            std::cerr << "[TCPHandler] Failed to listen: " << strerror(errno) << std::endl;
+            close(m_serverFd);
+            m_running = false;
+            return false;
+        }
+        
+        // Set non-blocking
+        int flags = fcntl(m_serverFd, F_GETFL, 0);
+        fcntl(m_serverFd, F_SETFL, flags | O_NONBLOCK);
+        
+        // Start accept thread
+        m_acceptThread = std::thread(&TCPHandler::serverAcceptThread, this);
+        
+        std::cout << "[TCPHandler] Server started on port " << m_serverPort << std::endl;
+        
+    } else {
+        // ===== CLIENT MODE =====
+        if (connectToServer()) {
+            // Send identification immediately
+            std::string idMsg = "ID:" + m_ownClientId + "\n";
+            send(m_clientFd, idMsg.c_str(), idMsg.length(), MSG_NOSIGNAL);
+            
+            m_receiveThread = std::thread(&TCPHandler::clientReceiveThread, this);
+            std::cout << "[TCPHandler] Client connected to " << m_serverIp << ":" << m_serverPort << std::endl;
+            
+            if (m_connectionCallback) {
+                m_connectionCallback(m_ownClientId, true);
+            }
+        } else {
+            std::cerr << "[TCPHandler] Failed to connect to server" << std::endl;
+            m_running = false;
+            return false;
+        }
     }
-
-    int opt = 1;
-    if (setsockopt(m_serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-        safeLog("[TCPHandler] Failed to set socket options: " + std::string(strerror(errno)));
-        close(m_serverFd);
-        m_running = false;
-        return false;
-    }
-
-    struct sockaddr_in addr;
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = htons(m_serverPort);
-
-    if (bind(m_serverFd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-        safeLog("[TCPHandler] Failed to bind to port " + std::to_string(m_serverPort) + ": " + strerror(errno));
-        close(m_serverFd);
-        m_running = false;
-        return false;
-    }
-
-    if (listen(m_serverFd, 10) < 0) {
-        safeLog("[TCPHandler] Failed to listen: " + std::string(strerror(errno)));
-        close(m_serverFd);
-        m_running = false;
-        return false;
-    }
-
-    int flags = fcntl(m_serverFd, F_GETFL, 0);
-    fcntl(m_serverFd, F_SETFL, flags | O_NONBLOCK);
-
-    m_acceptThread = std::thread(&TCPHandler::serverAcceptThread, this);
-    safeLog("[TCPHandler] Server started on port " + std::to_string(m_serverPort));
+    
     return true;
 }
 
 void TCPHandler::stop() {
     if (!m_running) return;
-    safeLog("[TCPHandler] Stopping...");
-
+    
+    std::cout << "[TCPHandler] Stopping..." << std::endl;
     m_running = false;
-
-    {
-        std::lock_guard<std::mutex> lock(m_clientsMutex);
-        if (m_serverFd >= 0) {
-            shutdown(m_serverFd, SHUT_RDWR);
-            close(m_serverFd);
-            m_serverFd = -1;
+    
+    if (m_isServerMode) {
+        // ===== STOP SERVER MODE - AGGRESSIVE =====
+        
+        // 1. Close server socket immediately to stop accept()
+        {
+            std::lock_guard<std::mutex> lock(m_socketMutex);
+            if (m_serverFd >= 0) {
+                std::cout << "[TCPHandler] Closing server socket" << std::endl;
+                shutdown(m_serverFd, SHUT_RDWR);
+                close(m_serverFd);
+                m_serverFd = -1;
+            }
         }
-        for (auto& pair : m_clientsByFd) {
-            shutdown(pair.first, SHUT_RDWR);
-            close(pair.first);
+        
+        // 2. Close ALL client sockets immediately
+        {
+            std::lock_guard<std::mutex> lock(m_clientsMutex);
+            std::cout << "[TCPHandler] Force closing " << m_clientsByFd.size() << " client connections" << std::endl;
+            
+            for (auto& pair : m_clientsByFd) {
+                std::cout << "[TCPHandler] Closing socket for client: " << pair.second->clientId << std::endl;
+                shutdown(pair.first, SHUT_RDWR);
+                close(pair.first);
+            }
+            
+            // Clear maps immediately
+            m_clientsByFd.clear();
+            m_clientsById.clear();
         }
-    }
-
-    if (m_acceptThread.joinable())
-        m_acceptThread.join();
-
-    {
-        std::lock_guard<std::mutex> lock(m_clientsMutex);
+        
+        // 3. Don't wait for accept thread - detach it
+        if (m_acceptThread.joinable()) {
+            std::cout << "[TCPHandler] Detaching accept thread" << std::endl;
+            m_acceptThread.detach();
+        }
+        
+        // 4. Don't wait for client threads - detach them all
+        std::cout << "[TCPHandler] Detaching " << m_clientThreads.size() << " client threads" << std::endl;
         for (auto& pair : m_clientThreads) {
-            if (pair.second.joinable())
-                pair.second.join();
+            if (pair.second.joinable()) {
+                pair.second.detach();
+            }
         }
-        m_clientsByFd.clear();
-        m_clientsById.clear();
         m_clientThreads.clear();
+        
+    } else {
+        // ===== STOP CLIENT MODE =====
+        {
+            std::lock_guard<std::mutex> lock(m_socketMutex);
+            if (m_clientFd >= 0) {
+                shutdown(m_clientFd, SHUT_RDWR);
+                close(m_clientFd);
+                m_clientFd = -1;
+            }
+        }
+        m_connected = false;
+        
+        // Don't wait for receive thread
+        if (m_receiveThread.joinable()) {
+            m_receiveThread.detach();
+        }
+        
+        if (m_connectionCallback) {
+            m_connectionCallback(m_ownClientId, false);
+        }
     }
-
-    safeLog("[TCPHandler] Stopped");
+    
+    std::cout << "[TCPHandler] Stopped" << std::endl;
 }
 
-void TCPHandler::serverAcceptThread() {
-    safeLog("[TCPHandler] Accept thread started");
+// ===== SERVER MODE METHODS =====
 
+void TCPHandler::serverAcceptThread() {
+    std::cout << "[TCPHandler] Accept thread started" << std::endl;
+    
+    // Set socket to non-blocking mode
+    int flags = fcntl(m_serverFd, F_GETFL, 0);
+    fcntl(m_serverFd, F_SETFL, flags | O_NONBLOCK);
+    
     while (m_running) {
         struct sockaddr_in clientAddr;
         socklen_t addrLen = sizeof(clientAddr);
+        
         int clientFd = accept(m_serverFd, (struct sockaddr*)&clientAddr, &addrLen);
-
+        
         if (clientFd < 0) {
-            if (errno != EAGAIN && errno != EWOULDBLOCK && m_running) {
-                safeLog("[TCPHandler] Accept failed: " + std::string(strerror(errno)));
+            if (errno != EAGAIN && errno != EWOULDBLOCK) {
+                if (m_running) {  // Only log if we're still running
+                    std::cerr << "[TCPHandler] Accept failed: " << strerror(errno) << std::endl;
+                }
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            // Check m_running more frequently - shorter sleep
+            for (int i = 0; i < 10 && m_running; i++) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
             continue;
         }
-
+        
         if (!m_running) {
             close(clientFd);
             break;
         }
-
-        {
-            std::lock_guard<std::mutex> lock(m_clientsMutex);
-            if ((int)m_clientsByFd.size() >= MAX_CLIENTS) {
-                safeLog("[TCPHandler] Connection limit reached (" + std::to_string(MAX_CLIENTS) + "), rejecting new connection");
-                std::string msg = "ERROR: Server full\n";
-                send(clientFd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
-                close(clientFd);
-                continue;
-            }
-        }
-
+        
+        // Get client IP
         char ipStr[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &(clientAddr.sin_addr), ipStr, INET_ADDRSTRLEN);
         int clientPort = ntohs(clientAddr.sin_port);
-
-        safeLog("[TCPHandler] New connection from " + std::string(ipStr) + ":" + std::to_string(clientPort));
-
+        
+        std::cout << "[TCPHandler] New connection from " << ipStr << ":" << clientPort << std::endl;
+        
+        // Create connection object
         auto conn = std::make_shared<ClientConnection>();
         conn->socketFd = clientFd;
         conn->ipAddress = ipStr;
         conn->port = clientPort;
         conn->isAuthenticated = false;
-
+        
         {
             std::lock_guard<std::mutex> lock(m_clientsMutex);
             m_clientsByFd[clientFd] = conn;
-            m_clientThreads[clientFd] = std::thread(&TCPHandler::serverClientThread, this, clientFd, std::string(ipStr), clientPort);
         }
+        
+        // Start client thread
+        m_clientThreads[clientFd] = std::thread(&TCPHandler::serverClientThread, this, 
+                                                clientFd, std::string(ipStr), clientPort);
     }
-
-    safeLog("[TCPHandler] Accept thread stopped");
+    
+    std::cout << "[TCPHandler] Accept thread stopped" << std::endl;
 }
 
 void TCPHandler::serverClientThread(int clientFd, const std::string& ip, int port) {
-    safeLog("[TCPHandler] Client thread started for " + ip + ":" + std::to_string(port));
-    std::string authenticatedClientId;
-
-    try {
-        char buffer[4096];
-        std::string leftover;
-        bool forceDisconnect = false;
-
-        while (m_running && !forceDisconnect) {
-            fd_set readfds;
-            FD_ZERO(&readfds);
-            FD_SET(clientFd, &readfds);
-
-            struct timeval tv;
-            tv.tv_sec = 0;
-            tv.tv_usec = 100000;
-
-            int activity = select(clientFd + 1, &readfds, NULL, NULL, &tv);
-
-            if (!m_running) break;
-            if (activity < 0) {
-                if (errno != EINTR)
-                    safeLog("[TCPHandler] Select error: " + std::string(strerror(errno)));
-                continue;
+    std::cout << "[TCPHandler] Client thread started for " << ip << ":" << port << std::endl;
+    
+    char buffer[4096];
+    std::string leftover;
+    
+    while (m_running) {
+        fd_set readfds;
+        FD_ZERO(&readfds);
+        FD_SET(clientFd, &readfds);
+        
+        struct timeval tv;
+        tv.tv_sec = 0;
+        tv.tv_usec = 100000;
+        
+        int activity = select(clientFd + 1, &readfds, NULL, NULL, &tv);
+        
+        if (!m_running) break;
+        
+        if (activity < 0) {
+            if (errno != EINTR) {
+                std::cerr << "[TCPHandler] Select error: " << strerror(errno) << std::endl;
             }
-            if (activity == 0) continue;
-
-            ssize_t bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
-            if (bytesRead <= 0) {
-                safeLog("[TCPHandler] Client " + ip + ":" + std::to_string(port) + " disconnected");
-                break;
+            continue;
+        }
+        
+        if (activity == 0) continue;
+        
+        ssize_t bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
+        
+        if (bytesRead <= 0) {
+            // Connection closed
+            std::cout << "[TCPHandler] Client " << ip << ":" << port << " disconnected" << std::endl;
+            break;
+        }
+        
+        buffer[bytesRead] = '\0';
+        
+        // Process messages
+        std::string data = leftover + std::string(buffer, bytesRead);
+        size_t pos = 0;
+        size_t newline;
+        
+        while ((newline = data.find('\n', pos)) != std::string::npos) {
+            std::string message = data.substr(pos, newline - pos);
+            
+            if (!message.empty() && message.back() == '\r') {
+                message.pop_back();
             }
-
-            buffer[bytesRead] = '\0';
-            std::string data = leftover + std::string(buffer, bytesRead);
-            size_t pos = 0;
-            size_t newline;
-
-            while (!forceDisconnect &&
-                   (newline = data.find('\n', pos)) != std::string::npos) {
-                std::string message = data.substr(pos, newline - pos);
-                if (!message.empty() && message.back() == '\r')
-                    message.pop_back();
-                pos = newline + 1;
-
-                if (message.empty()) continue;
-
-                bool justAuthenticated = false;
-                bool isAuthenticated   = false;
-                std::string currentClientId;
-                bool shouldReject = false;
-
+            
+            if (!message.empty()) {
+                std::string clientId;
                 {
                     std::lock_guard<std::mutex> lock(m_clientsMutex);
                     auto it = m_clientsByFd.find(clientFd);
-                    if (it == m_clientsByFd.end()) break;
-
-                    auto conn = it->second;
-                    if (!conn->isAuthenticated) {
-                        if (message.find("ID:") == 0) {
-                            currentClientId = message.substr(3);
-                            currentClientId.erase(currentClientId.find_last_not_of(" \t\r\n") + 1);
-                            currentClientId.erase(0, currentClientId.find_first_not_of(" \t\r\n"));
-
-                            if (m_validationCallback && !m_validationCallback(currentClientId)) {
-                                safeLog("[TCPHandler] Rejected unknown client: '" + currentClientId + "'");
-                                shouldReject = true;
-                            } else {
-                                conn->clientId       = currentClientId;
+                    if (it != m_clientsByFd.end()) {
+                        auto conn = it->second;
+                        
+                        // If not authenticated, first message should be ID:<clientId>
+                        if (!conn->isAuthenticated) {
+                            if (message.find("ID:") == 0) {
+                                clientId = message.substr(3);
+                                
+                                // VALIDATE CLIENT ID HERE
+                                if (m_validationCallback && !m_validationCallback(clientId)) {
+                                    std::cout << "[TCPHandler] Rejected unknown client: " << clientId << std::endl;
+                                    std::string rejectMsg = "ERROR: Unknown client ID - not in configuration\n";
+                                    send(clientFd, rejectMsg.c_str(), rejectMsg.length(), MSG_NOSIGNAL);
+                                    shutdown(clientFd, SHUT_RDWR);
+                                    close(clientFd);
+                                    {
+                                        std::lock_guard<std::mutex> lock(m_clientsMutex);
+                                        m_clientsByFd.erase(clientFd);
+                                    }
+                                    std::cout << "[TCPHandler] Rejected client " << clientId << " disconnected" << std::endl;
+                                    return;
+                                }
+                                
+                                conn->clientId = clientId;
                                 conn->isAuthenticated = true;
-                                m_clientsById[currentClientId] = conn;
-                                authenticatedClientId = currentClientId;
-                                justAuthenticated = true;
-                                safeLog("[TCPHandler] Client authenticated as: " + currentClientId);
+                                
+                                // Map by ID as well
+                                m_clientsById[clientId] = conn;
+                                
+                                std::cout << "[TCPHandler] Client authenticated as: " << clientId << std::endl;
+                                
+                                // Notify connection callback
+                                if (m_connectionCallback) {
+                                    m_connectionCallback(clientId, true);
+                                }
+                                
+                                // Send welcome
+                                std::string welcome = "Welcome " + clientId + "!\n";
+                                send(clientFd, welcome.c_str(), welcome.length(), MSG_NOSIGNAL);
                             }
-                        }
-                    } else {
-                        currentClientId = conn->clientId;
-                        isAuthenticated = true;
-                    }
-                }
-
-                if (shouldReject) {
-                    std::string rejectMsg = "ERROR: Unknown client ID - not in configuration\n";
-                    send(clientFd, rejectMsg.c_str(), rejectMsg.length(), MSG_NOSIGNAL);
-                    forceDisconnect = true;
-                    break;
-                }
-
-                if (justAuthenticated) {
-                    if (m_connectionCallback) {
-                        try { m_connectionCallback(currentClientId, true); }
-                        catch (const std::exception& e) {
-                            safeLog("[TCPHandler] Exception in connection callback: " + std::string(e.what()));
-                        } catch (...) {
-                            safeLog("[TCPHandler] Unknown exception in connection callback");
+                        } else {
+                            clientId = conn->clientId;
                         }
                     }
-                    std::string welcome = "Welcome " + currentClientId + "!\n";
-                    send(clientFd, welcome.c_str(), welcome.length(), MSG_NOSIGNAL);
                 }
-
-                if (isAuthenticated && m_messageCallback) {
-                    try { m_messageCallback(currentClientId, message); }
-                    catch (const std::exception& e) {
-                        safeLog("[TCPHandler] Exception in message callback: " + std::string(e.what()));
-                    } catch (...) {
-                        safeLog("[TCPHandler] Unknown exception in message callback");
-                    }
+                
+                // Handle authenticated message
+                if (!clientId.empty() && m_messageCallback) {
+                    m_messageCallback(clientId, message);
                 }
             }
-            leftover = data.substr(pos);
+            
+            pos = newline + 1;
         }
-
-    } catch (const std::exception& e) {
-        safeLog("[TCPHandler] Unhandled exception in client thread for " +
-                ip + ":" + std::to_string(port) + ": " + e.what());
-    } catch (...) {
-        safeLog("[TCPHandler] Unknown unhandled exception in client thread for " +
-                ip + ":" + std::to_string(port));
+        
+        leftover = data.substr(pos);
     }
-
+    
+    // Clean up
     {
         std::lock_guard<std::mutex> lock(m_clientsMutex);
         auto it = m_clientsByFd.find(clientFd);
         if (it != m_clientsByFd.end()) {
-            m_clientsById.erase(it->second->clientId);
+            std::string clientId = it->second->clientId;
+            if (!clientId.empty()) {
+                m_clientsById.erase(clientId);
+                if (m_connectionCallback) {
+                    m_connectionCallback(clientId, false);
+                }
+            }
             m_clientsByFd.erase(it);
         }
     }
-
-    if (!authenticatedClientId.empty() && m_connectionCallback) {
-        try { m_connectionCallback(authenticatedClientId, false); }
-        catch (const std::exception& e) {
-            safeLog("[TCPHandler] Exception in disconnection callback: " + std::string(e.what()));
-        } catch (...) {
-            safeLog("[TCPHandler] Unknown exception in disconnection callback");
-        }
-    }
-
+    
     close(clientFd);
-    safeLog("[TCPHandler] Client thread finished for " + ip + ":" + std::to_string(port));
+    std::cout << "[TCPHandler] Client thread stopped for " << ip << ":" << port << std::endl;
 }
 
 void TCPHandler::disconnectClient(const std::string& clientId) {
-    int fd = -1;
-    {
-        std::lock_guard<std::mutex> lock(m_clientsMutex);
-        auto it = m_clientsById.find(clientId);
-        if (it == m_clientsById.end()) return;
-        fd = it->second->socketFd;
+    std::lock_guard<std::mutex> lock(m_clientsMutex);
+    
+    auto it = m_clientsById.find(clientId);
+    if (it != m_clientsById.end()) {
+        int fd = it->second->socketFd;
+        
+        std::cout << "[TCPHandler] Forcefully disconnecting unknown client: " << clientId << std::endl;
+        
+        // Send rejection message
+        std::string rejectMsg = "ERROR: Unknown client ID - not in configuration. Goodbye.\n";
+        send(fd, rejectMsg.c_str(), rejectMsg.length(), MSG_NOSIGNAL);
+        
+        // Shutdown immediately to prevent reconnections
+        shutdown(fd, SHUT_RDWR);
+        
+        // Close socket
+        close(fd);
+        
+        // Remove from all maps
         m_clientsByFd.erase(fd);
         m_clientsById.erase(it);
+        
+        // Also clean up the client thread if it exists
+        auto threadIt = m_clientThreads.find(fd);
+        if (threadIt != m_clientThreads.end()) {
+            if (threadIt->second.joinable()) {
+                threadIt->second.detach(); // Detach instead of join to avoid blocking
+            }
+            m_clientThreads.erase(threadIt);
+        }
+        
+        std::cout << "[TCPHandler] Client " << clientId << " disconnected and cleaned up" << std::endl;
     }
-    safeLog("[TCPHandler] Forcefully disconnecting client: " + clientId);
-    std::string rejectMsg = "ERROR: Unknown client ID - not in configuration. Goodbye.\n";
-    send(fd, rejectMsg.c_str(), rejectMsg.length(), MSG_NOSIGNAL);
-    shutdown(fd, SHUT_RDWR);
-    close(fd);
 }
 
 bool TCPHandler::sendToClient(const std::string& clientId, const std::string& message) {
-    int fd = -1;
-    {
-        std::lock_guard<std::mutex> lock(m_clientsMutex);
-        auto it = m_clientsById.find(clientId);
-        if (it == m_clientsById.end()) return false;
-        fd = it->second->socketFd;
+    if (!m_isServerMode) return false;
+    
+    std::lock_guard<std::mutex> lock(m_clientsMutex);
+    
+    auto it = m_clientsById.find(clientId);
+    if (it != m_clientsById.end()) {
+        std::string formatted = message + "\n";
+        ssize_t sent = send(it->second->socketFd, formatted.c_str(), formatted.length(), MSG_NOSIGNAL);
+        return (sent > 0);
     }
-    std::string formatted = message + "\n";
-    ssize_t sent = send(fd, formatted.c_str(), formatted.length(), MSG_NOSIGNAL);
-    return (sent > 0);
+    
+    return false;
 }
 
 void TCPHandler::broadcastToAll(const std::string& message) {
-    std::vector<int> fds;
-    {
-        std::lock_guard<std::mutex> lock(m_clientsMutex);
-        fds.reserve(m_clientsByFd.size());
-        for (auto& pair : m_clientsByFd)
-            fds.push_back(pair.first);
-    }
+    if (!m_isServerMode) return;
+    
+    std::lock_guard<std::mutex> lock(m_clientsMutex);
+    
     std::string formatted = message + "\n";
-    for (int fd : fds)
-        send(fd, formatted.c_str(), formatted.length(), MSG_NOSIGNAL);
+    for (auto& pair : m_clientsByFd) {
+        send(pair.first, formatted.c_str(), formatted.length(), MSG_NOSIGNAL);
+    }
 }
 
 std::vector<std::string> TCPHandler::getConnectedClients() const {
     std::lock_guard<std::mutex> lock(m_clientsMutex);
+    
     std::vector<std::string> clients;
-    for (auto& pair : m_clientsById)
+    for (auto& pair : m_clientsById) {
         clients.push_back(pair.first);
+    }
     return clients;
 }
 
 bool TCPHandler::isClientConnected(const std::string& clientId) const {
     std::lock_guard<std::mutex> lock(m_clientsMutex);
     return m_clientsById.find(clientId) != m_clientsById.end();
+}
+
+void TCPHandler::removeClient(const std::string& clientId) {
+    std::lock_guard<std::mutex> lock(m_clientsMutex);
+    
+    auto it = m_clientsById.find(clientId);
+    if (it != m_clientsById.end()) {
+        int fd = it->second->socketFd;
+        m_clientsByFd.erase(fd);
+        m_clientsById.erase(it);
+        close(fd);
+    }
+}
+
+void TCPHandler::removeClient(int socketFd) {
+    std::lock_guard<std::mutex> lock(m_clientsMutex);
+    
+    auto it = m_clientsByFd.find(socketFd);
+    if (it != m_clientsByFd.end()) {
+        std::string clientId = it->second->clientId;
+        if (!clientId.empty()) {
+            m_clientsById.erase(clientId);
+        }
+        m_clientsByFd.erase(it);
+        close(socketFd);
+    }
+}
+
+// ===== CLIENT MODE METHODS =====
+
+bool TCPHandler::connectToServer() {
+    m_clientFd = socket(AF_INET, SOCK_STREAM, 0);
+    if (m_clientFd < 0) {
+        std::cerr << "[TCPHandler] Failed to create client socket: " << strerror(errno) << std::endl;
+        return false;
+    }
+    
+    struct sockaddr_in serverAddr;
+    memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(m_serverPort);
+    
+    if (inet_pton(AF_INET, m_serverIp.c_str(), &serverAddr.sin_addr) <= 0) {
+        std::cerr << "[TCPHandler] Invalid server IP: " << m_serverIp << std::endl;
+        close(m_clientFd);
+        return false;
+    }
+    
+    if (::connect(m_clientFd, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
+        std::cerr << "[TCPHandler] Failed to connect to server: " << strerror(errno) << std::endl;
+        close(m_clientFd);
+        return false;
+    }
+    
+    m_connected = true;
+    return true;
+}
+
+void TCPHandler::clientReceiveThread() {
+    std::cout << "[TCPHandler] Client receive thread started" << std::endl;
+    
+    char buffer[4096];
+    std::string leftover;
+    
+    while (m_running && m_connected) {
+        fd_set readfds;
+        FD_ZERO(&readfds);
+        FD_SET(m_clientFd, &readfds);
+        
+        struct timeval tv;
+        tv.tv_sec = 1;
+        tv.tv_usec = 0;
+        
+        int activity = select(m_clientFd + 1, &readfds, NULL, NULL, &tv);
+        
+        if (!m_running) break;
+        
+        if (activity < 0) {
+            if (errno != EINTR) {
+                std::cerr << "[TCPHandler] Select error: " << strerror(errno) << std::endl;
+            }
+            continue;
+        }
+        
+        if (activity == 0) continue;
+        
+        ssize_t bytesRead = recv(m_clientFd, buffer, sizeof(buffer) - 1, 0);
+        
+        if (bytesRead <= 0) {
+            std::cout << "[TCPHandler] Server disconnected" << std::endl;
+            m_connected = false;
+            if (m_connectionCallback) {
+                m_connectionCallback(m_ownClientId, false);
+            }
+            break;
+        }
+        
+        buffer[bytesRead] = '\0';
+        
+        // Process messages
+        std::string data = leftover + std::string(buffer, bytesRead);
+        size_t pos = 0;
+        size_t newline;
+        
+        while ((newline = data.find('\n', pos)) != std::string::npos) {
+            std::string message = data.substr(pos, newline - pos);
+            
+            if (!message.empty() && message.back() == '\r') {
+                message.pop_back();
+            }
+            
+            if (!message.empty() && m_messageCallback) {
+                m_messageCallback(m_ownClientId, message);
+            }
+            
+            pos = newline + 1;
+        }
+        
+        leftover = data.substr(pos);
+    }
+    
+    std::cout << "[TCPHandler] Client receive thread stopped" << std::endl;
+}
+
+bool TCPHandler::sendToServer(const std::string& message) {
+    if (m_isServerMode) return false;
+    
+    std::lock_guard<std::mutex> lock(m_socketMutex);
+    
+    if (!m_connected || m_clientFd < 0) {
+        return false;
+    }
+    
+    std::string formatted = message + "\n";
+    ssize_t sent = send(m_clientFd, formatted.c_str(), formatted.length(), MSG_NOSIGNAL);
+    
+    return (sent > 0);
 }
