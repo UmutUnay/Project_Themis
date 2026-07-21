@@ -358,6 +358,8 @@ void TCPHandler::serverClientThread(int clientFd, const std::string& ip, int por
             
             if (!message.empty()) {
                 std::string clientId;
+                bool justAuthenticated = false;
+                bool rejected = false;
                 {
                     std::lock_guard<std::mutex> lock(m_clientsMutex);
                     auto it = m_clientsByFd.find(clientFd);
@@ -371,44 +373,39 @@ void TCPHandler::serverClientThread(int clientFd, const std::string& ip, int por
                                 
                                 // VALIDATE CLIENT ID HERE
                                 if (m_validationCallback && !m_validationCallback(clientId)) {
-                                    std::cout << "[TCPHandler] Rejected unknown client: " << clientId << std::endl;
-                                    std::string rejectMsg = "ERROR: Unknown client ID - not in configuration\n";
-                                    send(clientFd, rejectMsg.c_str(), rejectMsg.length(), MSG_NOSIGNAL);
-                                    shutdown(clientFd, SHUT_RDWR);
-                                    close(clientFd);
-                                    {
-                                        std::lock_guard<std::mutex> lock(m_clientsMutex);
-                                        m_clientsByFd.erase(clientFd);
-                                    }
-                                    std::cout << "[TCPHandler] Rejected client " << clientId << " disconnected" << std::endl;
-                                    return;
+                                    // Erase from map while lock is held; close fd after
+                                    m_clientsByFd.erase(clientFd);
+                                    rejected = true;
+                                } else {
+                                    conn->clientId = clientId;
+                                    conn->isAuthenticated = true;
+                                    m_clientsById[clientId] = conn;
+                                    justAuthenticated = true;
                                 }
-                                
-                                conn->clientId = clientId;
-                                conn->isAuthenticated = true;
-                                
-                                // Map by ID as well
-                                m_clientsById[clientId] = conn;
-                                
-                                std::cout << "[TCPHandler] Client authenticated as: " << clientId << std::endl;
-                                
-                                // Notify connection callback
-                                if (m_connectionCallback) {
-                                    m_connectionCallback(clientId, true);
-                                }
-                                
-                                // Send welcome
-                                std::string welcome = "Welcome " + clientId + "!\n";
-                                send(clientFd, welcome.c_str(), welcome.length(), MSG_NOSIGNAL);
                             }
                         } else {
                             clientId = conn->clientId;
                         }
                     }
                 }
-                
+                // Lock released — safe to call callbacks and close fds
+                if (rejected) {
+                    std::cout << "[TCPHandler] Rejected unknown client: " << clientId << std::endl;
+                    std::string rejectMsg = "ERROR: Unknown client ID - not in configuration\n";
+                    send(clientFd, rejectMsg.c_str(), rejectMsg.length(), MSG_NOSIGNAL);
+                    shutdown(clientFd, SHUT_RDWR);
+                    close(clientFd);
+                    return;
+                }
+                if (justAuthenticated) {
+                    std::cout << "[TCPHandler] Client authenticated as: " << clientId << std::endl;
+                    std::string welcome = "Welcome " + clientId + "!\n";
+                    send(clientFd, welcome.c_str(), welcome.length(), MSG_NOSIGNAL);
+                    if (m_connectionCallback)
+                        m_connectionCallback(clientId, true);
+                }
                 // Handle authenticated message
-                if (!clientId.empty() && m_messageCallback) {
+                if (!clientId.empty() && !justAuthenticated && m_messageCallback) {
                     m_messageCallback(clientId, message);
                 }
             }
@@ -421,18 +418,20 @@ void TCPHandler::serverClientThread(int clientFd, const std::string& ip, int por
     
     // Clean up
     {
-        std::lock_guard<std::mutex> lock(m_clientsMutex);
-        auto it = m_clientsByFd.find(clientFd);
-        if (it != m_clientsByFd.end()) {
-            std::string clientId = it->second->clientId;
-            if (!clientId.empty()) {
-                m_clientsById.erase(clientId);
-                if (m_connectionCallback) {
-                    m_connectionCallback(clientId, false);
-                }
+        std::string disconnectedId;
+        {
+            std::lock_guard<std::mutex> lock(m_clientsMutex);
+            auto it = m_clientsByFd.find(clientFd);
+            if (it != m_clientsByFd.end()) {
+                disconnectedId = it->second->clientId;
+                if (!disconnectedId.empty())
+                    m_clientsById.erase(disconnectedId);
+                m_clientsByFd.erase(it);
             }
-            m_clientsByFd.erase(it);
         }
+        // Fire disconnect callback outside the lock
+        if (!disconnectedId.empty() && m_connectionCallback)
+            m_connectionCallback(disconnectedId, false);
     }
     
     close(clientFd);
