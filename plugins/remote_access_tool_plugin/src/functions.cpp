@@ -97,30 +97,7 @@ static bool writeJson(const std::string& path, const json& j)
     return success;
 }
 
-// Real-time status update callback
-static void updateStatusOutput(const std::string& status) {
-    if (g_currentConfigPath.empty()) return;
-    
-    json cfg = readJson(g_currentConfigPath);
-    if (!cfg.is_discarded()) {
-        auto now = std::chrono::system_clock::now();
-        auto time_t = std::chrono::system_clock::to_time_t(now);
-        std::string timestamp = std::ctime(&time_t);
-        timestamp.pop_back();
-        
-        cfg["status_output"] = "Last updated: " + timestamp + "\n" + status;
-        
-        if (writeJson(g_currentConfigPath, cfg)) {
-            // Emit D-Bus signal to notify Themis
-            emitConfigChangedSignal("ratConfig");
-            
-            // Also send response for immediate update
-            json r = makeResponse(true);
-            sendResponse(r, "confGenerated");
-        }
-    }
-}
-
+/*
 static void emitConfigChangedSignal(const std::string& configId) {
     try {
         // Create a simple signal message
@@ -136,6 +113,32 @@ static void emitConfigChangedSignal(const std::string& configId) {
         std::cerr << "[RAT Plugin] Failed to emit signal: " << e.what() << std::endl;
     }
 }
+*/
+
+// Real-time status update callback
+static void updateStatusOutput(const std::string& status) {
+    if (g_currentConfigPath.empty()) return;
+    
+    json cfg = readJson(g_currentConfigPath);
+    if (!cfg.is_discarded()) {
+        auto now = std::chrono::system_clock::now();
+        auto time_t = std::chrono::system_clock::to_time_t(now);
+        std::string timestamp = std::ctime(&time_t);
+        timestamp.pop_back();
+        
+        cfg["status_output"] = "Last updated: " + timestamp + "\n" + status;
+        
+        if (writeJson(g_currentConfigPath, cfg)) {
+            // Emit D-Bus signal to notify Themis
+            /*emitConfigChangedSignal("ratConfig");*/
+            
+            // Also send response for immediate update
+            json r = makeResponse(true);
+            sendResponse(r, "confGenerated");
+        }
+    }
+}
+
 
 // Auto-refresh loop (kept for backward compatibility, but real-time is preferred)
 static void autoRefreshLoop(const std::string& outputPath) {

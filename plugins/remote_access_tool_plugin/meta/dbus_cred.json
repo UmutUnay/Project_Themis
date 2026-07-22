@@ -1,0 +1,119 @@
+{
+    "getConfig": {
+        "broadcastMessage": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "broadcastMessage"
+        },
+        "clientList": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "getClientList"
+        },
+        "pushRules": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "pushRules"
+        },
+        "ratConfig": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "getRatConfig"
+        },
+        "runCommand": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "runCommand"
+        },
+        "runCommandAll": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "runCommandAll"
+        },
+        "runCommandTag": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "runCommandTag"
+        },
+        "scpDownload": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "scpDownload"
+        },
+        "scpUpload": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "scpUpload"
+        },
+        "sendMessage": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "sendMessage"
+        },
+        "status": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "getStatus"
+        }
+    },
+    "setConfig": {
+        "broadcastMessage": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "broadcastMessage"
+        },
+        "clientList": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "getClientList"
+        },
+        "pushRules": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "pushRules"
+        },
+        "ratConfig": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "setRatConfig"
+        },
+        "runCommand": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "runCommand"
+        },
+        "runCommandAll": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "runCommandAll"
+        },
+        "runCommandTag": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "runCommandTag"
+        },
+        "scpDownload": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "scpDownload"
+        },
+        "scpUpload": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "scpUpload"
+        },
+        "sendMessage": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "sendMessage"
+        },
+        "status": {
+            "bus": "org.themis.remote_access_tool",
+            "interface": "org.themis.GenericBus",
+            "member": "getStatus"
+        }
+    },
+    "signals": [
+        "configChanged"
+    ]
+}

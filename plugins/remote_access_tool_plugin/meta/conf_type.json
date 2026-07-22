@@ -1,0 +1,68 @@
+﻿[
+    {
+        "configId": "ratConfig",
+        "configType": "ratConfig",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Configuration"
+    },
+    {
+        "configId": "clientList",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Client List"
+    },
+    {
+        "configId": "status",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Connection Status"
+    },
+    {
+        "configId": "runCommand",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Run Command"
+    },
+    {
+        "configId": "runCommandAll",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Run Command (All)"
+    },
+    {
+        "configId": "runCommandTag",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Run Command (Tag)"
+    },
+    {
+        "configId": "scpUpload",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Upload File"
+    },
+    {
+        "configId": "scpDownload",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Download File"
+    },
+    {
+        "configId": "sendMessage",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Send Message"
+    },
+    {
+        "configId": "broadcastMessage",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Broadcast Message"
+    },
+    {
+        "configId": "pushRules",
+        "configType": "JSON",
+        "pluginId": "remote_access_tool",
+        "title": "RAT - Push Rules"
+    }
+]
